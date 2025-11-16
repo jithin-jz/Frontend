@@ -1,23 +1,22 @@
-import { useAuth } from '../context/AuthContext';
-import Loader from '../components/Loader';
-import NotAuthorized from '../components/NotAuthorized';
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
-  if (loading) return <Loader />;
-
-  if (!user) return <NotAuthorized />;
-
-  if (user.isBlock) {
+  // Still fetching /auth/me
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-600 text-lg font-semibold">
-        Your account has been blocked. Please contact support.
+      <div className="text-white p-10 text-center">
+        Loading...
       </div>
     );
   }
 
-  if (user.role === 'Admin') return <NotAuthorized />;
+  // After loading is done and user is definitely null → redirect
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return children;
 };

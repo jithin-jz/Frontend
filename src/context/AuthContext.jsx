@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/authApi";
+import api from "../utils/api";
 
 const AuthContext = createContext();
 
@@ -9,96 +9,88 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Load saved auth info on startup -------------------------
+  // Load current user on refresh
   useEffect(() => {
-    const access = localStorage.getItem("access");
-    const storedUser = localStorage.getItem("user");
-
-    if (access && storedUser) {
+    const loadUser = async () => {
       try {
-        setUser(JSON.parse(storedUser));
+        const res = await api.get("/auth/me/");
+        setUser(res.data);
       } catch {
-        localStorage.removeItem("user");
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    setLoading(false);
+    loadUser();
   }, []);
 
-  // Save tokens + user --------------------------------------
-  const saveAuth = (tokens, userInfo) => {
-    localStorage.setItem("access", tokens.access);
-    localStorage.setItem("refresh", tokens.refresh);
-    localStorage.setItem("user", JSON.stringify(userInfo));
+  // Delay to allow HttpOnly cookies to be stored
+  const waitForCookies = () =>
+    new Promise((resolve) => setTimeout(resolve, 120));
 
-    setUser(userInfo);
-  };
-
-  // Helper for redirect AFTER state updates -----------------
-  const redirectAfterAuth = (isAdmin) => {
-    setTimeout(() => {
-      if (isAdmin) {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/");
-      }
-    }, 50); // KEY FIX
-  };
-
-  // LOGIN ----------------------------------------------------
+  // -----------------------------
+  // LOGIN
+  // -----------------------------
   const login = async (email, password) => {
-    const res = await authApi.login(email, password);
+    await api.post("/auth/login/", { email, password });
 
-    const userInfo = res.data.user;
-    const tokens = res.data.tokens;
+    await waitForCookies();
 
-    saveAuth(tokens, userInfo);
-    redirectAfterAuth(userInfo.is_staff);
+    const res = await api.get("/auth/me/");
+    setUser(res.data);
 
-    return userInfo;
+    if (res.data.is_staff) navigate("/admin/dashboard");
+    else navigate("/");
   };
 
-  // REGISTER -------------------------------------------------
+  // -----------------------------
+  // REGISTER
+  // -----------------------------
   const register = async (fullName, email, password) => {
     const [first_name, ...rest] = fullName.split(" ");
-    const last_name = rest.join(" ") || "";
+    const last_name = rest.join(" ");
 
-    const res = await authApi.register(first_name, last_name, email, password);
+    await api.post("/auth/register/", {
+      first_name,
+      last_name,
+      email,
+      password,
+    });
 
-    const userInfo = res.data.user;
-    const tokens = res.data.tokens;
+    await waitForCookies();
 
-    saveAuth(tokens, userInfo);
-    redirectAfterAuth(false);
+    const res = await api.get("/auth/me/");
+    setUser(res.data);
 
-    return userInfo;
+    navigate("/");
   };
 
-  // GOOGLE LOGIN --------------------------------------------
+  // -----------------------------
+  // GOOGLE LOGIN
+  // -----------------------------
   const googleLogin = async (credential) => {
-    const res = await authApi.googleLogin(credential);
+    await api.post("/auth/google/", { id_token: credential });
 
-    const userInfo = res.data.user;
-    const tokens = res.data.tokens;
+    await waitForCookies();
 
-    saveAuth(tokens, userInfo);
-    redirectAfterAuth(userInfo.is_staff);
+    const res = await api.get("/auth/me/");
+    setUser(res.data);
 
-    return userInfo;
+    if (res.data.is_staff) navigate("/admin/dashboard");
+    else navigate("/");
   };
 
-  // LOGOUT ---------------------------------------------------
-  const logout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    localStorage.removeItem("user");
-
+  // -----------------------------
+  // LOGOUT
+  // -----------------------------
+  const logout = async () => {
+    await api.post("/auth/logout/");
     setUser(null);
     navigate("/login");
   };
 
-  // Computed admin flag -------------------------------------
-  const isAdmin = user?.is_staff === true;
+  const isAdmin = Boolean(user?.is_staff);
 
   return (
     <AuthContext.Provider

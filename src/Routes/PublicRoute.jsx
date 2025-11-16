@@ -1,19 +1,28 @@
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const PublicRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
 
-  // If user is logged in and not blocked
-  if (user && !user.isBlock) {
-    if (user.role === 'Admin') {
-      return <Navigate to="/admin/dashboard" />;
+  // Wait until /auth/me resolves
+  if (loading) {
+    return (
+      <div className="text-white p-10 text-center">
+        Loading...
+      </div>
+    );
+  }
+
+  // Logged-in users cannot access login/register
+  if (user) {
+    if (isAdmin) {
+      return <Navigate to="/admin/dashboard" replace />;
     } else {
-      return <Navigate to="/" />;
+      return <Navigate to="/" replace />;
     }
   }
 
-  // If blocked or not logged in, allow access
+  // Not logged in → allow access
   return children;
 };
 

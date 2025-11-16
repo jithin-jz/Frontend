@@ -19,18 +19,33 @@ import {
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const { cartCount = 0, wishlistCount = 0 } = useCart();
+  const { cartCount, wishlistCount } = useCart();
   const location = useLocation();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Safe badge numbers
+  const safe = (n) => (typeof n === "number" && n > 0 ? n : 0);
+  const cart = safe(cartCount);
+  const wishlist = safe(wishlistCount);
+
+  // Close dropdown + menu on route change
   useEffect(() => {
     setMenuOpen(false);
-    setDropdownOpen(false);
+    setTimeout(() => setDropdownOpen(false), 50);
   }, [location.pathname]);
 
-  // FIX: Admin should NOT see Navbar
+  // Close dropdown on outside click
+  useEffect(() => {
+    const close = (e) => {
+      if (!e.target.closest(".dropdown-menu")) setDropdownOpen(false);
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, []);
+
+  // Admin has separate layout
   if (user?.is_staff) return null;
 
   const navLinks = [
@@ -39,8 +54,8 @@ const Navbar = () => {
   ];
 
   const userLinks = [
-    { to: "/cart", icon: <FiShoppingCart />, label: "Cart", badge: cartCount },
-    { to: "/wishlist", icon: <FiHeart />, label: "Wishlist", badge: wishlistCount },
+    { to: "/cart", icon: <FiShoppingCart />, label: "Cart", badge: cart },
+    { to: "/wishlist", icon: <FiHeart />, label: "Wishlist", badge: wishlist },
     { to: "/orders", icon: <FiPackage />, label: "Orders" },
   ];
 
@@ -51,7 +66,7 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-slate-900 shadow">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between relative">
 
         {/* Desktop Left */}
         <div className="hidden md:flex items-center space-x-6">
@@ -68,8 +83,8 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Center Logo */}
-        <div className="absolute left-1/2 transform -translate-x-1/2">
+        {/* Logo */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 z-20">
           <Link to="/">
             <img
               src="https://tss-static-images.gumlet.io/non-member-logo2.gif"
@@ -99,8 +114,8 @@ const Navbar = () => {
                 </Link>
               ))}
 
-              {/* Dropdown */}
-              <div className="relative">
+              {/* Profile Dropdown */}
+              <div className="relative dropdown-menu">
                 <button
                   onClick={() => setDropdownOpen((prev) => !prev)}
                   className="p-2 text-white hover:bg-slate-700 rounded-full transition"
@@ -109,19 +124,25 @@ const Navbar = () => {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-slate-800 text-white rounded-md shadow-lg py-1 border border-slate-700">
+                  <div className="absolute right-0 mt-2 w-44 bg-slate-800 text-white rounded-md shadow-lg py-1 border border-slate-700">
+                    <div className="px-4 py-2 text-sm text-gray-300 border-b border-slate-700">
+                      Hi, {user.first_name || "User"}
+                    </div>
+
                     <Link
                       to="/profile"
-                      className="block px-4 py-2 text-sm hover:bg-slate-700 flex items-center gap-2"
+                      className="block px-4 py-2 text-sm hover:bg-slate-700"
                     >
-                      <FiUser /> Profile
+                      <FiUser className="inline-block mr-2" />
+                      Profile
                     </Link>
 
                     <button
                       onClick={logout}
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-slate-700 flex items-center gap-2"
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-slate-700"
                     >
-                      <FiLogOut /> Logout
+                      <FiLogOut className="inline-block mr-2" />
+                      Logout
                     </button>
                   </div>
                 )}
@@ -142,36 +163,40 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu */}
-        <div className="md:hidden flex items-center justify-between w-full">
+        {/* Mobile */}
+        <div className="md:hidden flex items-center w-full justify-between">
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
-            className="p-2 rounded-md text-white hover:bg-slate-700"
+            className="p-2 text-white hover:bg-slate-700"
           >
             {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          <Link to="/cart" className="relative p-2 rounded-md text-white hover:bg-slate-700">
+          <Link to="/cart" className="relative p-2 text-white hover:bg-slate-700">
             <FiShoppingCart size={22} />
-            {cartCount > 0 && (
+            {cart > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                {cartCount}
+                {cart}
               </span>
             )}
           </Link>
         </div>
       </div>
 
-      {/* Mobile Expanded */}
+      {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-slate-900 px-4 pt-4 pb-6 space-y-4 border-t border-slate-700">
+        <div className="md:hidden bg-slate-900 p-4 border-t border-slate-700 space-y-4">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className="flex items-center gap-2 p-2 rounded-md text-white hover:bg-slate-700"
+              className={`flex items-center gap-2 p-2 rounded-md ${
+                location.pathname === link.to
+                  ? "bg-slate-800"
+                  : "text-white hover:bg-slate-700"
+              }`}
             >
-              {link.icon} <span>{link.label}</span>
+              {link.icon} {link.label}
             </Link>
           ))}
 
@@ -181,11 +206,15 @@ const Navbar = () => {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="flex items-center gap-2 p-2 rounded-md text-white hover:bg-slate-700"
+                  className={`flex items-center gap-2 p-2 rounded-md ${
+                    location.pathname === link.to
+                      ? "bg-slate-800"
+                      : "text-white hover:bg-slate-700"
+                  }`}
                 >
-                  {link.icon} <span>{link.label}</span>
+                  {link.icon} {link.label}
                   {link.badge > 0 && (
-                    <span className="ml-auto bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                    <span className="ml-auto bg-red-600 text-white text-xs font-bold rounded-full px-2">
                       {link.badge}
                     </span>
                   )}
@@ -194,9 +223,9 @@ const Navbar = () => {
 
               <button
                 onClick={logout}
-                className="w-full text-left flex items-center gap-2 p-2 rounded-md text-white hover:bg-slate-700"
+                className="flex items-center gap-2 p-2 text-white hover:bg-slate-700 rounded-md"
               >
-                <FiLogOut /> <span>Logout</span>
+                <FiLogOut /> Logout
               </button>
             </>
           ) : (
@@ -204,9 +233,13 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className="flex items-center gap-2 p-2 rounded-md text-white hover:bg-slate-700"
+                className={`flex items-center gap-2 p-2 rounded-md ${
+                  location.pathname === link.to
+                    ? "bg-slate-800"
+                    : "text-white hover:bg-slate-700"
+                }`}
               >
-                {link.icon} <span>{link.label}</span>
+                {link.icon} {link.label}
               </Link>
             ))
           )}

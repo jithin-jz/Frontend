@@ -2,38 +2,27 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-8 mt-10">
+    <footer className="bg-gray-900 text-gray-300 py-8 mt-12 border-t border-gray-800">
       <div className="max-w-4xl mx-auto px-4 text-center">
-        {/* Logo */}
-        <h2 className="text-xl font-bold text-white tracking-tight mb-4">
+
+        <h2 className="text-lg font-semibold mb-4 text-white">
           THE SOULED STORE
         </h2>
 
-        {/* New Links */}
-        <div className="flex justify-center gap-8 text-sm mb-6">
-          <Link
-            to="/about"
-            className="text-gray-300 hover:text-white transition-colors duration-300"
-          >
-            About Us
+        <div className="flex justify-center gap-6 text-sm mb-5">
+          <Link to="/about" className="hover:text-white">
+            About
           </Link>
-          <Link
-            to="/contact"
-            className="text-gray-300 hover:text-white transition-colors duration-300"
-          >
+          <Link to="/contact" className="hover:text-white">
             Contact
           </Link>
-          <Link
-            to="/privacy"
-            className="text-gray-300 hover:text-white transition-colors duration-300"
-          >
-            Privacy Policy
+          <Link to="/privacy" className="hover:text-white">
+            Privacy
           </Link>
         </div>
 
-        {/* Copyright */}
-        <p className="text-xs text-gray-400">
-          &copy; {new Date().getFullYear()} Marvel Store. All rights reserved.
+        <p className="text-xs text-gray-500">
+          © {new Date().getFullYear()} The Souled Store. All rights reserved.
         </p>
       </div>
     </footer>

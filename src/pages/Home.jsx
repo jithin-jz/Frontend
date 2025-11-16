@@ -1,30 +1,36 @@
-import { useEffect, useState } from 'react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import api from '../utils/api';
-import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
-import { FiHeart } from 'react-icons/fi';
-import { FaHeart } from 'react-icons/fa';
-import Loader from '../components/Loader';
+import { useEffect, useState, useCallback } from "react";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import api from "../utils/api";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { FiHeart } from "react-icons/fi";
+import { FaHeart } from "react-icons/fa";
+import Loader from "../components/Loader";
 
 const bannerImages = [
-  'https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/Home_Page_BdOVM1E.jpg?format=webp&w=1500&dpr=1.5',
-  'https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/The_Dragon_Queen_-_Homepage_banner_copy.2.jpg?format=webp&w=1500&dpr=1.5',
-  'https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/spiderman_homepage.jpg?format=webp&w=1500&dpr=1.5',
+  "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/Home_Page_BdOVM1E.jpg?format=webp&w=1500&dpr=1.5",
+  "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/The_Dragon_Queen_-_Homepage_banner_copy.2.jpg?format=webp&w=1500&dpr=1.5",
+  "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/spiderman_homepage.jpg?format=webp&w=1500&dpr=1.5",
 ];
 
-const ProductCard = ({ product, onToggleWishlist, isWishlisted }) => {
-  const handleToggleWishlist = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onToggleWishlist(product);
-  };
+// -------------------------------------------
+// Product Card
+// -------------------------------------------
+const ProductCard = ({ product, isWishlisted, onToggleWishlist }) => {
+  const toggle = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onToggleWishlist(product);
+    },
+    [product, onToggleWishlist]
+  );
 
   return (
     <div className="group relative">
       <button
-        onClick={handleToggleWishlist}
+        onClick={toggle}
         className="absolute top-2 right-2 z-10 p-2 rounded-full bg-gray-900/80 backdrop-blur-sm"
       >
         {isWishlisted ? (
@@ -39,8 +45,7 @@ const ProductCard = ({ product, onToggleWishlist, isWishlisted }) => {
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-auto object-contain opacity-0 transition-opacity duration-300 group-hover:scale-105"
-            onLoad={(e) => (e.currentTarget.style.opacity = 1)}
+            className="w-full h-auto object-contain transition-opacity duration-300 opacity-100 group-hover:scale-105"
           />
         </div>
 
@@ -53,6 +58,9 @@ const ProductCard = ({ product, onToggleWishlist, isWishlisted }) => {
   );
 };
 
+// -------------------------------------------
+// Home Page Component
+// -------------------------------------------
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
@@ -62,7 +70,7 @@ const Home = () => {
   const { wishlist, addToWishlist, removeFromWishlist } = useCart();
   const { user } = useAuth();
 
-  // Preload banner images
+  // Preload banners
   useEffect(() => {
     bannerImages.forEach((src) => {
       const img = new Image();
@@ -70,41 +78,54 @@ const Home = () => {
     });
   }, []);
 
-  // Fetch products from Django backend
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await api.get('/products/');
+        const res = await api.get("/products/");
         const products = res.data;
 
         setFeaturedProducts(products.slice(0, 4));
-        setNewArrivals(products.slice(-4)); // last 4
+        setNewArrivals(products.slice(-4));
       } catch {
-        toast.error('Failed to fetch products');
+        toast.error("Failed to fetch products");
       } finally {
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
   // Banner rotation
   useEffect(() => {
-    const interval = setInterval(
-      () => setCurrentBanner((prev) => (prev + 1) % bannerImages.length),
-      4000
-    );
+    const interval = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
+    }, 4000);
+
     return () => clearInterval(interval);
   }, []);
 
-  const handleToggleWishlist = (product) => {
-    if (!user) return toast.warn('Please login to manage wishlist');
-    const isInWishlist = wishlist.some((item) => item.id === product.id);
-    isInWishlist ? removeFromWishlist(product.id) : addToWishlist(product);
-    toast[isInWishlist ? 'info' : 'success'](
-      `${product.name} ${isInWishlist ? 'removed from' : 'added to'} wishlist`
-    );
-  };
+  // Wishlist toggle
+  const handleToggleWishlist = useCallback(
+    (product) => {
+      if (!user) {
+        toast.warn("Please login to manage wishlist");
+        return;
+      }
+
+      const isWishlisted = wishlist.some((item) => item.id === product.id);
+
+      if (isWishlisted) {
+        removeFromWishlist(product.id);
+        toast.info(`${product.name} removed from wishlist`);
+      } else {
+        addToWishlist(product);
+        toast.success(`${product.name} added to wishlist`);
+      }
+    },
+    [user, wishlist, addToWishlist, removeFromWishlist]
+  );
 
   if (loading) {
     return (
@@ -116,13 +137,13 @@ const Home = () => {
 
   return (
     <div className="space-y-12 pb-0 bg-gray-900 text-white">
+
       {/* Banner */}
       <div className="w-full overflow-hidden relative">
         <img
           src={bannerImages[currentBanner]}
-          alt={`Banner ${currentBanner + 1}`}
-          className="w-full h-auto object-cover opacity-0 transition-opacity duration-700"
-          onLoad={(e) => (e.currentTarget.style.opacity = 1)}
+          alt="Banner"
+          className="w-full h-auto object-cover transition-opacity duration-700 opacity-100"
         />
 
         <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
@@ -131,7 +152,7 @@ const Home = () => {
               key={index}
               onClick={() => setCurrentBanner(index)}
               className={`h-2 w-2 rounded-full ${
-                index === currentBanner ? 'bg-white' : 'bg-white/50'
+                index === currentBanner ? "bg-white" : "bg-white/50"
               }`}
             />
           ))}
@@ -142,12 +163,12 @@ const Home = () => {
       <div className="overflow-hidden py-2">
         <div className="flex gap-8 animate-marquee whitespace-nowrap min-w-max">
           {[
-            '🎉 Free Delivery Over ₹499',
-            '🔥 Flat 50% Off - Marvel Gear',
-            '🕸️ Spider-Verse Exclusive',
-            '🚚 COD Available',
-            '🔁 Easy 7-Day Returns',
-            '🧙 Anime Merch From Naruto, One Piece & More!',
+            "🎉 Free Delivery Over ₹499",
+            "🔥 Flat 50% Off - Marvel Gear",
+            "🕸️ Spider-Verse Exclusive",
+            "🚚 COD Available",
+            "🔁 Easy 7-Day Returns",
+            "🧙 Anime Merch From Naruto, One Piece & More!",
           ].map((offer, index) => (
             <div
               key={index}
@@ -159,7 +180,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Featured Products */}
+      {/* Featured */}
       <section className="container mx-auto px-4">
         <h2 className="mb-6 text-2xl font-bold">Featured Products</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -189,7 +210,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA */}
       <div className="container mx-auto px-4 text-center mb-0">
         <Link
           to="/products"

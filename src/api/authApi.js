@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "../utils/api";
 
 export const authApi = {
   login: (email, password) =>
@@ -9,9 +9,11 @@ export const authApi = {
       first_name,
       last_name,
       email,
-      password
+      password,
     }),
 
   googleLogin: (id_token) =>
-    api.post("/auth/google/", { id_token })
+    api.post("/auth/google/", { id_token }),
+
+  logout: () => api.post("/auth/logout/"),
 };

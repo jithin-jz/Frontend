@@ -1,19 +1,29 @@
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import NotAuthorized from "../components/NotAuthorized";
 
 const AdminRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
 
-  // Wait for AuthContext to load localStorage data
-  if (loading) return null;
+  // Still fetching /auth/me
+  if (loading) {
+    return (
+      <div className="text-white p-10 text-center">
+        Loading...
+      </div>
+    );
+  }
 
-  // Not logged in
-  if (!user) return <NotAuthorized />;
+  // After loading, if user is still null — not logged in
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-  // Logged in but NOT admin
-  if (!user.is_staff) return <NotAuthorized />;
+  // Logged in but not admin
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
+  }
 
-  // Admin allowed
+  // PASS
   return children;
 };
 

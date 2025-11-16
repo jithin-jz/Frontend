@@ -4,87 +4,104 @@ import { useAuth } from "../../context/AuthContext";
 import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
   const { login, googleLogin } = useAuth();
 
-  const handleSubmit = async (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage("");
+    setError("");
 
     try {
       await login(email, password);
-      // NO navigate("/") here, AuthContext handles all redirects
-    } catch {
-      setErrorMessage("Invalid email or password");
+      // Redirect handled inside AuthContext
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 400 || status === 401) {
+        setError("Invalid email or password");
+      } else {
+        setError("Login failed. Try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSuccess = async (response) => {
+  const onGoogleSuccess = async (response) => {
+    setGoogleLoading(true);
+    setError("");
+
     try {
       await googleLogin(response.credential);
-      // No manual redirect, AuthContext handles it
+      // Redirect handled inside AuthContext
     } catch {
-      setErrorMessage("Google login failed");
+      setError("Google login failed. Try again.");
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4 py-12">
-      <div className="max-w-md w-full space-y-8 bg-slate-800 border border-slate-700 rounded-xl shadow-md p-8">
-        <h2 className="text-3xl font-bold text-center text-white">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
+      <div className="max-w-md w-full bg-slate-800 p-8 rounded-xl border border-slate-700">
+        <h2 className="text-3xl text-white font-bold text-center mb-4">Login</h2>
 
-        {errorMessage && (
-          <p className="text-red-500 text-sm font-medium text-center">
-            {errorMessage}
-          </p>
-        )}
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={submit}>
           <input
             type="email"
-            placeholder="Email Address"
+            required
+            className="w-full bg-slate-700 text-white p-2 rounded"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-4 py-2 bg-slate-700 text-white rounded-md"
           />
 
           <input
             type="password"
+            required
+            className="w-full bg-slate-700 text-white p-2 rounded"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full px-4 py-2 bg-slate-700 text-white rounded-md"
           />
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-2 bg-red-600 text-white rounded-md"
+            disabled={loading || googleLoading}
+            className={`w-full p-2 rounded text-white transition 
+              ${
+                loading || googleLoading
+                  ? "bg-red-800 cursor-not-allowed"
+                  : "bg-red-600 hover:bg-red-700"
+              }
+            `}
           >
             {loading ? "Signing in..." : "Login"}
           </button>
         </form>
 
-        <div className="flex justify-center mt-4">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => setErrorMessage("Google sign-in failed")}
-          />
+        <div className="mt-4 flex justify-center">
+          {googleLoading ? (
+            <div className="text-gray-300 text-sm">Connecting to Google…</div>
+          ) : (
+            <GoogleLogin
+              onSuccess={onGoogleSuccess}
+              onError={() => setError("Google login failed")}
+            />
+          )}
         </div>
 
-        <p className="text-center text-gray-400 text-sm">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-red-500 hover:underline">
-            Register here
+        <p className="text-gray-400 text-center mt-4">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-red-400 underline">
+            Register
           </Link>
         </p>
       </div>

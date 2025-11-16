@@ -41,16 +41,16 @@ import EditProduct from "./admin/EditProduct";
 import AdminUserDetails from "./admin/AdminUserDetails";
 import AdminOrderManagement from "./admin/AdminOrderManagement";
 
-
-// ---------------------------------------------------------
-// APP CONTENT
-// ---------------------------------------------------------
+// -------------------------------------------------------------------
+// APP CONTENT (AUTH-READY)
+// -------------------------------------------------------------------
 const AppContent = () => {
   const { loading, user } = useAuth();
 
+  // Critical fix: Wait until AuthContext finishes fetching /auth/me
   if (loading) return <Loader />;
 
-  const isAdmin = user?.is_staff === true;
+  const isAdmin = Boolean(user?.is_staff);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
@@ -94,7 +94,6 @@ const AppContent = () => {
 
           {/* ---------------- ADMIN ---------------- */}
 
-          {/* ROOT admin route (required!) */}
           <Route
             path="/admin"
             element={
@@ -131,10 +130,9 @@ const AppContent = () => {
   );
 };
 
-
-// ---------------------------------------------------------
+// -------------------------------------------------------------------
 // ROOT APP
-// ---------------------------------------------------------
+// -------------------------------------------------------------------
 const App = () => (
   <Router>
     <AuthProvider>
