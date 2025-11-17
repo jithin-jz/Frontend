@@ -14,19 +14,21 @@ const SingleProduct = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch product on mount
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await api.get(`/products/${id}`);
         setProduct(res.data);
+      } catch (err) {
+        toast.error("Failed to load product");
       } finally {
         setLoading(false);
       }
     };
-    fetchProduct();
 
-    // ✅ Always scroll to top when product changes
-    window.scrollTo(0, 0);
+    fetchProduct();
+    window.scrollTo(0, 0); // Always scroll to top
   }, [id]);
 
   const handleAddToCart = () => {
@@ -34,6 +36,7 @@ const SingleProduct = () => {
       toast.error("Please login to add items to cart");
       return;
     }
+
     addToCart({ ...product, quantity: 1 });
     toast.success("Added to cart!");
   };
@@ -43,6 +46,7 @@ const SingleProduct = () => {
       toast.error("Please login to buy products");
       return;
     }
+
     addToCart({ ...product, quantity: 1 });
     toast.success("Item added to cart!");
     navigate("/cart");
@@ -72,12 +76,13 @@ const SingleProduct = () => {
 
   return (
     <div className="bg-slate-900 text-white min-h-screen px-4 pt-10 pb-0">
-      {/* Product Section */}
+      {/* Product Container */}
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 bg-slate-800 p-6 rounded-2xl shadow-md">
+        
         {/* Product Image */}
         <div className="bg-slate-700 rounded-xl overflow-hidden">
           <img
-            src={product.image}
+            src={product.image || "https://via.placeholder.com/400?text=No+Image"}
             alt={product.name}
             className="w-full h-[450px] object-cover"
           />
@@ -87,17 +92,21 @@ const SingleProduct = () => {
         <div className="flex flex-col justify-between">
           <div className="space-y-4">
             <h1 className="text-3xl font-bold text-white">{product.name}</h1>
+
             <p className="text-2xl text-green-400 font-semibold">
-              ₹{product.price.toFixed(2)}
+              ₹{Number(product.price).toLocaleString("en-IN")}
             </p>
+
             <p className="text-slate-300 text-sm">
               {product.description || "No description available."}
             </p>
 
+            {/* Category → Filters on Products Page */}
             <div className="text-sm">
               <span className="font-medium text-slate-100">Category: </span>
               <Link
-                to={`/products?category=${product.category}`}
+                to="/products"
+                state={{ category: product.category }}
                 className="text-green-400 hover:underline"
               >
                 {product.category}
@@ -113,6 +122,7 @@ const SingleProduct = () => {
             >
               Add to Cart
             </button>
+
             <button
               onClick={handleBuyNow}
               className="w-full sm:w-auto px-6 py-3 rounded-md font-medium bg-slate-700 hover:bg-slate-600 transition"
@@ -121,6 +131,7 @@ const SingleProduct = () => {
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );

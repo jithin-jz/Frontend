@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../../utils/api";
 import { toast } from "react-toastify";
 import { useCart } from "../../context/CartContext";
@@ -24,6 +25,8 @@ const sectionBanners = {
 };
 
 const Products = () => {
+  const location = useLocation();
+
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,13 +39,41 @@ const Products = () => {
     useCart();
   const { user } = useAuth();
 
-  // ----------------------------
-  // Fetch Products
-  // ----------------------------
+  // --------------------------------------
+  // Apply category filter if coming from SingleProduct
+  // --------------------------------------
+  useEffect(() => {
+    if (location.state?.category) {
+      const cat =
+        location.state.category.toLowerCase() === "men" ? "Men" : "Women";
+      setSelectedCategories([cat]);
+      window.history.replaceState({}, document.title); // clean state
+    }
+  }, [location.state]);
+
+  // --------------------------------------
+  // Fetch Products with backend filters
+  // --------------------------------------
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await api.get("/products/");
+        const params = {};
+
+        // Search
+        if (searchTerm.trim()) params.search = searchTerm;
+
+        // Category
+        if (selectedCategories.length === 1)
+          params.category = selectedCategories[0].toLowerCase();
+
+        // Price range
+        if (selectedPrices.length === 1) {
+          const range = selectedPrices[0];
+          params.min_price = range.min;
+          if (range.max !== Infinity) params.max_price = range.max;
+        }
+
+        const res = await api.get("/products/", { params });
         setAllProducts(res.data);
       } catch {
         toast.error("Failed to load products");
@@ -51,38 +82,13 @@ const Products = () => {
       }
     };
 
+    setLoading(true);
     fetchProducts();
-  }, []);
+  }, [searchTerm, selectedCategories, selectedPrices]);
 
-  // ----------------------------
-  // Filtering Logic (Memoized)
-  // ----------------------------
-  const filteredProducts = useMemo(() => {
-    let data = [...allProducts];
-
-    if (selectedPrices.length) {
-      data = data.filter((product) =>
-        selectedPrices.some(
-          (range) => product.price >= range.min && product.price <= range.max
-        )
-      );
-    }
-
-    if (selectedCategories.length) {
-      data = data.filter((p) => selectedCategories.includes(p.category));
-    }
-
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      data = data.filter((p) => p.name.toLowerCase().includes(term));
-    }
-
-    return data;
-  }, [allProducts, selectedPrices, selectedCategories, searchTerm]);
-
-  // ----------------------------
+  // --------------------------------------
   // Wishlist Handling
-  // ----------------------------
+  // --------------------------------------
   const handleToggleWishlist = useCallback(
     (product) => {
       if (!user) {
@@ -103,9 +109,9 @@ const Products = () => {
     [user, wishlist, addToWishlist, removeFromWishlist]
   );
 
-  // ----------------------------
-  // Add to Cart Handling
-  // ----------------------------
+  // --------------------------------------
+  // Add to Cart
+  // --------------------------------------
   const handleAddToCart = useCallback(
     (product) => {
       if (!user) {
@@ -125,41 +131,36 @@ const Products = () => {
     [user, cart, addToCart]
   );
 
-  // ----------------------------
-  // Group by category
-  // ----------------------------
+  // --------------------------------------
+  // Group by category sections
+  // --------------------------------------
   const groupedByCategory = useMemo(
     () =>
       categories.map((cat) => ({
         category: cat,
         banner: sectionBanners[cat],
-        products: filteredProducts.filter((p) => p.category === cat),
+        products: allProducts.filter(
+          (p) => p.category.toLowerCase() === cat.toLowerCase()
+        ),
       })),
-    [filteredProducts]
+    [allProducts]
   );
 
-  // ----------------------------
-  // Toggle Filters
-  // ----------------------------
+  // --------------------------------------
+  // Filter Toggles
+  // --------------------------------------
   const togglePriceFilter = (range) => {
     setSelectedPrices((prev) =>
-      prev.some((r) => r.label === range.label)
-        ? prev.filter((r) => r.label !== range.label)
-        : [...prev, range]
+      prev.some((r) => r.label === range.label) ? [] : [range]
     );
   };
 
   const toggleCategoryFilter = (category) => {
     setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
+      prev.includes(category) ? [] : [category]
     );
   };
 
-  // ----------------------------
-  // Render
-  // ----------------------------
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 bg-gray-900 text-white mb-0">
       <Filters
@@ -177,7 +178,7 @@ const Products = () => {
 
       {loading ? (
         <Loader />
-      ) : filteredProducts.length === 0 ? (
+      ) : allProducts.length === 0 ? (
         <p className="text-center text-gray-400">No products found.</p>
       ) : (
         groupedByCategory.map(({ category, banner, products }) => (
