@@ -1,5 +1,5 @@
 // src/context/CartContext.jsx
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import api from "../utils/api";
 import { useAuth } from "./AuthContext";
 
@@ -8,143 +8,130 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const { user } = useAuth();
 
-  // cart: backend cart items -> [{ id, product: {...}, quantity }]
   const [cart, setCart] = useState([]);
-  // wishlistItems: backend wishlist items -> [{ id, product: {...} }]
   const [wishlistItems, setWishlistItems] = useState([]);
-  // wishlist: exposed to UI -> array of product objects for backward compatibility
   const [wishlist, setWishlist] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
-  // Load cart + wishlist when user logs in (or clear when logged out)
+  // Prevent multiple initial loads
+  const hasLoaded = useRef(false);
+
+  /* ------------------------ INITIAL LOAD ------------------------ */
   useEffect(() => {
-    if (user) {
-      setLoading(true);
-      Promise.all([loadCart(), loadWishlist()]).finally(() => setLoading(false));
-    } else {
+    if (!user) {
+      // Reset on logout
       setCart([]);
       setWishlistItems([]);
       setWishlist([]);
+      hasLoaded.current = false;
       setLoading(false);
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // Load only once per login
+    if (!hasLoaded.current) {
+      hasLoaded.current = true;
+      setLoading(true);
+
+      Promise.all([loadCart(), loadWishlist()]).finally(() => {
+        setLoading(false);
+      });
+    }
   }, [user]);
 
-  // -------------------------
-  // Backend loaders
-  // -------------------------
+  /* ------------------------ LOADERS ------------------------ */
   const loadCart = async () => {
     try {
       const res = await api.get("/cart/");
-      // backend returns { id, items: [{ id, product, quantity }] }
       setCart(res.data.items || []);
-      return res.data;
-    } catch (err) {
-      // silent fail
-      return null;
-    }
+    } catch {}
   };
 
   const loadWishlist = async () => {
     try {
       const res = await api.get("/cart/wishlist/");
-      // res.data.items -> [{ id: wishlist_item_id, product: {...} }]
       const items = res.data.items || [];
       setWishlistItems(items);
-      // expose just product objects for compatibility with existing UI
       setWishlist(items.map((it) => it.product));
-      return res.data;
-    } catch (err) {
-      // silent fail
+    } catch {
       setWishlistItems([]);
       setWishlist([]);
-      return null;
     }
   };
 
-  // -------------------------
-  // CART actions
-  // -------------------------
+  /* ------------------------ CART ACTIONS ------------------------ */
   const addToCart = async (product, quantity = 1) => {
     if (!user) return;
+
     try {
-      await api.post("/cart/add/", { product_id: product.id, quantity });
+      await api.post("/cart/add/", {
+        product_id: product.id,
+        quantity,
+      });
       await loadCart();
-    } catch (err) {
-      // silent fail
-    }
+    } catch {}
   };
 
   const removeFromCart = async (itemId) => {
     try {
       await api.delete(`/cart/remove/${itemId}/`);
       await loadCart();
-    } catch (err) {
-      // silent fail
-    }
+    } catch {}
   };
 
-  const updateQuantity = async (itemId, newQty) => {
-    if (newQty < 1) return removeFromCart(itemId);
+  const updateQuantity = async (itemId, qty) => {
+    if (qty < 1) return removeFromCart(itemId);
+
     try {
-      await api.patch(`/cart/update/${itemId}/`, { quantity: newQty });
+      await api.patch(`/cart/update/${itemId}/`, { quantity: qty });
       await loadCart();
-    } catch (err) {
-      // silent fail
-    }
+    } catch {}
   };
 
   const clearCart = async () => {
     try {
-      // Remove each item (backend doesn't expose a clear endpoint)
       const items = [...cart];
       for (const it of items) {
         await api.delete(`/cart/remove/${it.id}/`);
       }
       setCart([]);
-    } catch (err) {
-      // silent fail
-    }
+    } catch {}
   };
 
-  // -------------------------
-  // WISHLIST actions (same context)
-  // -------------------------
+  /* ------------------------ WISHLIST ACTIONS ------------------------ */
   const addToWishlist = async (product) => {
     if (!user) return;
+
     try {
-      await api.post("/cart/wishlist/add/", { product_id: product.id });
+      await api.post("/cart/wishlist/add/", {
+        product_id: product.id,
+      });
       await loadWishlist();
-    } catch (err) {
-      // silent fail
-    }
+    } catch {}
   };
 
   const removeFromWishlist = async (productId) => {
     if (!user) return;
+
     try {
-      // find wishlist item id by product id
       const item = wishlistItems.find((it) => it.product?.id === productId);
       if (!item) return;
+
       await api.delete(`/cart/wishlist/remove/${item.id}/`);
       await loadWishlist();
-    } catch (err) {
-      // silent fail
-    }
+    } catch {}
   };
 
-  const isProductWishlisted = (productId) => {
-    return wishlist.some((p) => p.id === productId);
-  };
+  const isProductWishlisted = (productId) =>
+    wishlist.some((p) => p.id === productId);
 
-  // -------------------------
-  // Derived values
-  // -------------------------
+  /* ------------------------ DERIVED VALUES ------------------------ */
   const cartCount = cart.reduce((sum, it) => sum + (it.quantity || 1), 0);
 
   const cartTotal = cart.reduce(
-    (sum, it) => sum + (it.product?.price || 0) * (it.quantity || 1),
+    (sum, it) =>
+      sum + (it.product?.price || 0) * (it.quantity || 1),
     0
   );
 
@@ -153,24 +140,23 @@ export const CartProvider = ({ children }) => {
   return (
     <CartContext.Provider
       value={{
-        // cart
         cart,
         cartCount,
         cartTotal,
+
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
 
-        // wishlist (exposed as array of product objects for backward compatibility)
         wishlist,
         wishlistCount,
         addToWishlist,
         removeFromWishlist,
         isProductWishlisted,
 
-        // meta
         loading,
+
         reloadCart: loadCart,
         reloadWishlist: loadWishlist,
       }}

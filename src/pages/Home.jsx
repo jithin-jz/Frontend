@@ -14,9 +14,9 @@ const bannerImages = [
   "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/spiderman_homepage.jpg?format=webp&w=1500&dpr=1.5",
 ];
 
-// -------------------------------------------
-// Product Card
-// -------------------------------------------
+/* -------------------------------------------
+   Product Card
+------------------------------------------- */
 const ProductCard = ({ product, isWishlisted, onToggleWishlist }) => {
   const toggle = useCallback(
     (e) => {
@@ -58,9 +58,9 @@ const ProductCard = ({ product, isWishlisted, onToggleWishlist }) => {
   );
 };
 
-// -------------------------------------------
-// Home Page Component
-// -------------------------------------------
+/* -------------------------------------------
+   Home Page
+------------------------------------------- */
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
@@ -70,7 +70,7 @@ const Home = () => {
   const { addToWishlist, removeFromWishlist, isProductWishlisted } = useCart();
   const { user } = useAuth();
 
-  // Preload banners
+  /* Preload banner images */
   useEffect(() => {
     bannerImages.forEach((src) => {
       const img = new Image();
@@ -78,7 +78,7 @@ const Home = () => {
     });
   }, []);
 
-  // Fetch products
+  /* Fetch products */
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -97,7 +97,7 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  // Banner rotation
+  /* Banner rotation */
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
@@ -106,7 +106,7 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Wishlist toggle
+  /* Wishlist toggle */
   const handleToggleWishlist = useCallback(
     (product) => {
       if (!user) {
@@ -135,6 +135,7 @@ const Home = () => {
 
   return (
     <div className="space-y-12 pb-0 bg-gray-900 text-white">
+
       {/* Banner */}
       <div className="w-full overflow-hidden relative">
         <img
@@ -177,11 +178,13 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Featured */}
+      {/* ---------------------- */}
+      {/* NEW ARRIVALS FIRST     */}
+      {/* ---------------------- */}
       <section className="container mx-auto px-4">
-        <h2 className="mb-6 text-2xl font-bold">Featured Products</h2>
+        <h2 className="mb-6 text-2xl font-bold">New Arrivals</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {featuredProducts.map((product) => (
+          {newArrivals.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -192,11 +195,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* New Arrivals */}
+      {/* ---------------------- */}
+      {/* FEATURED BELOW         */}
+      {/* ---------------------- */}
       <section className="container mx-auto px-4">
-        <h2 className="mb-6 text-2xl font-bold">New Arrivals</h2>
+        <h2 className="mb-6 text-2xl font-bold">Featured Products</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {newArrivals.map((product) => (
+          {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}

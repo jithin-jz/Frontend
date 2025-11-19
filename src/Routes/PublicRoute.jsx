@@ -1,10 +1,10 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const PublicRoute = ({ children }) => {
-  const { user, loading, isAdmin } = useAuth();
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
 
-  // Wait until /auth/me resolves
+  // Avoid redirecting before auth initializes
   if (loading) {
     return (
       <div className="text-white p-10 text-center">
@@ -13,17 +13,12 @@ const PublicRoute = ({ children }) => {
     );
   }
 
-  // Logged-in users cannot access login/register
-  if (user) {
-    if (isAdmin) {
-      return <Navigate to="/admin/dashboard" replace />;
-    } else {
-      return <Navigate to="/" replace />;
-    }
+  // No user after loading → redirect
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
-  // Not logged in → allow access
   return children;
 };
 
-export default PublicRoute;
+export default ProtectedRoute;

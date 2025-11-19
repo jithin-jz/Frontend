@@ -42,9 +42,17 @@ const Payment = () => {
 
   const placeOrder = async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent Strict Mode double submit
+
+    if (loading) return; // Prevent double fire manually
 
     if (!user) {
       toast.error("Please login!");
+      return;
+    }
+
+    if (cart.length === 0) {
+      toast.error("Cart is empty");
       return;
     }
 
@@ -53,7 +61,6 @@ const Payment = () => {
     try {
       validateAddress();
 
-      // correct backend format
       const formattedCart = cart.map((i) => ({
         id: i.product.id,
         name: i.product.name,
@@ -71,12 +78,12 @@ const Payment = () => {
 
       if (paymentMethod === "cod") {
         clearCart();
-        toast.success("Order placed (COD)");
+        toast.success("Order placed (Cash on Delivery)");
         navigate("/order-success");
         return;
       }
 
-      // STRIPE REDIRECT
+      // Stripe redirect
       if (res.data.checkout_url) {
         window.location.href = res.data.checkout_url;
         return;
@@ -96,6 +103,7 @@ const Payment = () => {
 
         {/* LEFT FORM */}
         <form className="md:w-2/3 space-y-6" onSubmit={placeOrder}>
+
           <h2 className="text-xl font-semibold border-b border-gray-700 pb-2">
             Shipping Information
           </h2>
@@ -120,10 +128,12 @@ const Payment = () => {
           <button
             type="submit"
             disabled={loading}
+            onClick={(e) => e.stopPropagation()}
             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50"
           >
             {loading ? "Processing..." : "Place Order"}
           </button>
+
         </form>
 
         {/* RIGHT SUMMARY */}
@@ -146,17 +156,16 @@ const Payment = () => {
               <span>Subtotal</span>
               <span>₹{cartTotal.toFixed(2)}</span>
             </div>
-
             <div className="flex justify-between">
               <span>Shipping</span>
               <span className="text-green-400">Free</span>
             </div>
-
             <div className="flex justify-between text-base font-semibold pt-2">
               <span>Total</span>
               <span>₹{cartTotal.toFixed(2)}</span>
             </div>
           </div>
+
         </div>
 
       </div>

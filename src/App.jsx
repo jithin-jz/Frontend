@@ -25,6 +25,7 @@ import Wishlist from "./pages/Wishlist";
 import Orders from "./pages/Orders";
 import Payment from "./pages/Payment";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import OrderSuccess from "./pages/OrderSuccess";
 import ProfileDetails from "./pages/ProfileDetails";
 
 // Auth Pages
@@ -41,103 +42,224 @@ import EditProduct from "./admin/EditProduct";
 import AdminUserDetails from "./admin/AdminUserDetails";
 import AdminOrderManagement from "./admin/AdminOrderManagement";
 
-// -------------------------------------------------------------------
-// APP CONTENT (AUTH-READY)
-// -------------------------------------------------------------------
-const AppContent = () => {
-  const { loading, user } = useAuth();
 
-  // Critical fix: Wait until AuthContext finishes fetching /auth/me
-  if (loading) return <Loader />;
+/* -------------------------------------------------------------------
+   NAVBAR + FOOTER WRAPPERS (Prevent rerender loops)
+-------------------------------------------------------------------- */
+const NavbarWrapper = () => {
+  const { user } = useAuth();
+  if (user?.is_staff) return null;        // hide on admin pages
+  return <Navbar />;
+};
 
-  const isAdmin = Boolean(user?.is_staff);
+const FooterWrapper = () => {
+  const { user } = useAuth();
+  if (user?.is_staff) return null;
+  return <Footer />;
+};
+
+
+/* -------------------------------------------------------------------
+   MAIN ROUTE WRAPPER (Stable, no re-mounts)
+-------------------------------------------------------------------- */
+const MainRoutes = () => {
+  const { loading } = useAuth();
+
+  if (loading) return <Loader />;        // waits for /auth/me once
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+    <Routes>
 
-      {/* Hide navbar/footer for admin */}
-      {!isAdmin && <Navbar />}
+      {/* ---------------- PUBLIC ---------------- */}
+      <Route path="/" element={<Home />} />
+      <Route path="/products" element={<Products />} />
+      <Route path="/products/:id" element={<SingleProduct />} />
 
-      <main className="flex-grow">
-        <Routes>
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
 
-          {/* Public */}
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<SingleProduct />} />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
 
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
+      {/* ---------------- USER PROTECTED ---------------- */}
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        }
+      />
 
-          <Route
-            path="/register"
-            element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            }
-          />
+      <Route
+        path="/wishlist"
+        element={
+          <ProtectedRoute>
+            <Wishlist />
+          </ProtectedRoute>
+        }
+      />
 
-          {/* User Protected */}
-          <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-          <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-          <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-          <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
-          <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><ProfileDetails /></ProtectedRoute>} />
+      <Route
+        path="/orders"
+        element={
+          <ProtectedRoute>
+            <Orders />
+          </ProtectedRoute>
+        }
+      />
 
-          {/* ---------------- ADMIN ---------------- */}
+      <Route
+        path="/payment"
+        element={
+          <ProtectedRoute>
+            <Payment />
+          </ProtectedRoute>
+        }
+      />
 
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <Dashboard />
-              </AdminRoute>
-            }
-          />
+      <Route
+        path="/payment-success"
+        element={
+          <ProtectedRoute>
+            <PaymentSuccess />
+          </ProtectedRoute>
+        }
+      />
 
-          <Route
-            path="/admin/dashboard"
-            element={
-              <AdminRoute>
-                <Dashboard />
-              </AdminRoute>
-            }
-          />
+      {/* COD success page */}
+      <Route
+        path="/order-success"
+        element={
+          <ProtectedRoute>
+            <OrderSuccess />
+          </ProtectedRoute>
+        }
+      />
 
-          <Route path="/admin/users" element={<AdminRoute><Users /></AdminRoute>} />
-          <Route path="/admin/users/:id" element={<AdminRoute><AdminUserDetails /></AdminRoute>} />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfileDetails />
+          </ProtectedRoute>
+        }
+      />
 
-          <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
-          <Route path="/admin/products/add" element={<AdminRoute><AddProduct /></AdminRoute>} />
-          <Route path="/admin/products/edit/:id" element={<AdminRoute><EditProduct /></AdminRoute>} />
+      {/* ---------------- ADMIN ---------------- */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <Dashboard />
+          </AdminRoute>
+        }
+      />
 
-          <Route path="/admin/orders" element={<AdminRoute><AdminOrderManagement /></AdminRoute>} />
-          <Route path="/admin/reports" element={<AdminRoute><Reports /></AdminRoute>} />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <AdminRoute>
+            <Dashboard />
+          </AdminRoute>
+        }
+      />
 
-        </Routes>
-      </main>
+      <Route
+        path="/admin/users"
+        element={
+          <AdminRoute>
+            <Users />
+          </AdminRoute>
+        }
+      />
 
-      {!isAdmin && <Footer />}
-    </div>
+      <Route
+        path="/admin/users/:id"
+        element={
+          <AdminRoute>
+            <AdminUserDetails />
+          </AdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/products"
+        element={
+          <AdminRoute>
+            <AdminProducts />
+          </AdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/products/add"
+        element={
+          <AdminRoute>
+            <AddProduct />
+          </AdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/products/edit/:id"
+        element={
+          <AdminRoute>
+            <EditProduct />
+          </AdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/orders"
+        element={
+          <AdminRoute>
+            <AdminOrderManagement />
+          </AdminRoute>
+        }
+      />
+
+      <Route
+        path="/admin/reports"
+        element={
+          <AdminRoute>
+            <Reports />
+          </AdminRoute>
+        }
+      />
+
+    </Routes>
   );
 };
 
-// -------------------------------------------------------------------
-// ROOT APP
-// -------------------------------------------------------------------
+
+/* -------------------------------------------------------------------
+   ROOT APP (Correct placement, no more re-renders)
+-------------------------------------------------------------------- */
 const App = () => (
   <Router>
     <AuthProvider>
       <CartProvider>
-        <AppContent />
+
+        <NavbarWrapper />
+
+        <main className="min-h-screen bg-gray-900 text-white">
+          <MainRoutes />
+        </main>
+
+        <FooterWrapper />
 
         <ToastContainer
           position="bottom-right"
@@ -150,6 +272,7 @@ const App = () => (
           toastClassName="text-xs px-3 py-1 rounded-full min-h-0 h-auto"
           bodyClassName="m-0 p-0"
         />
+
       </CartProvider>
     </AuthProvider>
   </Router>

@@ -1,3 +1,4 @@
+// src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
@@ -25,13 +26,13 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  // Delay to allow HttpOnly cookies to be stored
+  // Small delay to allow HttpOnly cookies to save before calling /me
   const waitForCookies = () =>
     new Promise((resolve) => setTimeout(resolve, 120));
 
-  // -----------------------------
+  // ---------------------------------------------------------
   // LOGIN
-  // -----------------------------
+  // ---------------------------------------------------------
   const login = async (email, password) => {
     await api.post("/auth/login/", { email, password });
 
@@ -44,11 +45,11 @@ export const AuthProvider = ({ children }) => {
     else navigate("/");
   };
 
-  // -----------------------------
+  // ---------------------------------------------------------
   // REGISTER
-  // -----------------------------
+  // ---------------------------------------------------------
   const register = async (fullName, email, password) => {
-    const [first_name, ...rest] = fullName.split(" ");
+    const [first_name, ...rest] = fullName.trim().split(" ");
     const last_name = rest.join(" ");
 
     await api.post("/auth/register/", {
@@ -66,9 +67,9 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
-  // -----------------------------
+  // ---------------------------------------------------------
   // GOOGLE LOGIN
-  // -----------------------------
+  // ---------------------------------------------------------
   const googleLogin = async (credential) => {
     await api.post("/auth/google/", { id_token: credential });
 
@@ -81,11 +82,13 @@ export const AuthProvider = ({ children }) => {
     else navigate("/");
   };
 
-  // -----------------------------
+  // ---------------------------------------------------------
   // LOGOUT
-  // -----------------------------
+  // ---------------------------------------------------------
   const logout = async () => {
-    await api.post("/auth/logout/");
+    try {
+      await api.post("/auth/logout/");
+    } catch {}
     setUser(null);
     navigate("/login");
   };

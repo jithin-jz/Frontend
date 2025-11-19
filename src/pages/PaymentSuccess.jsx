@@ -1,6 +1,4 @@
-// src/components/PaymentSuccess.js
-
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { toast } from "react-toastify";
@@ -10,12 +8,16 @@ const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { clearCart } = useCart();
-  
-  const [verificationStatus, setVerificationStatus] = useState("Verifying payment...");
+
+  const [statusMessage, setStatusMessage] = useState("Verifying payment...");
   const [loading, setLoading] = useState(true);
 
+  const sessionId = searchParams.get("session_id");
+  const executedRef = useRef(false); // Prevent strict-mode double trigger
+
   useEffect(() => {
-    const sessionId = searchParams.get("session_id");
+    if (executedRef.current) return;
+    executedRef.current = true;
 
     if (!sessionId) {
       toast.error("Missing payment session ID.");
@@ -25,32 +27,38 @@ const PaymentSuccess = () => {
 
     const verifyPayment = async () => {
       try {
-        // CALLS THE FIXED DJANGO VERIFY ENDPOINT
         const res = await api.get(`/orders/verify-payment/?session_id=${sessionId}`);
-        
-        const { status, payment_verified } = res.data;
-        if (payment_verified) {
+        const { payment_verified, status } = res.data;
 
-          setVerificationStatus("Payment successful! Your order is confirmed.");
-          clearCart(); // Clear cart only after successful verification
-        } else {
-          setVerificationStatus("Payment pending or failed. Please contact support.");
+        // COD handling
+        if (status === "processing") {
+          setStatusMessage("Order placed successfully (Cash On Delivery)");
+          clearCart();
+          return;
         }
-        
+
+        // Stripe success
+        if (payment_verified) {
+          setStatusMessage("Payment successful! Your order is confirmed.");
+          clearCart();
+        } else {
+          setStatusMessage("Payment pending or failed. Please contact support.");
+        }
       } catch (err) {
-        setVerificationStatus("An error occurred during verification. Please check your orders page.");
         console.error("Verification Error:", err);
+        setStatusMessage("Error verifying payment. Check your orders.");
       } finally {
         setLoading(false);
       }
     };
 
     verifyPayment();
-  }, [searchParams, navigate, clearCart]);
+  }, [sessionId, navigate, clearCart]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white py-20 px-4 flex items-center justify-center">
       <div className="max-w-xl mx-auto bg-gray-800 rounded-xl p-8 shadow-xl text-center space-y-6">
+
         {loading ? (
           <>
             <svg className="animate-spin h-8 w-8 text-green-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -61,9 +69,14 @@ const PaymentSuccess = () => {
           </>
         ) : (
           <>
-            <h2 className={`text-2xl font-bold ${verificationStatus.includes("successful") ? 'text-green-400' : 'text-red-400'}`}>
-              {verificationStatus}
+            <h2
+              className={`text-2xl font-bold ${
+                statusMessage.toLowerCase().includes("successful") ? "text-green-400" : "text-red-400"
+              }`}
+            >
+              {statusMessage}
             </h2>
+
             <button
               onClick={() => navigate("/orders")}
               className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg font-semibold"
@@ -72,6 +85,7 @@ const PaymentSuccess = () => {
             </button>
           </>
         )}
+
       </div>
     </div>
   );

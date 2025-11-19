@@ -1,19 +1,20 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Loader from "../components/Loader";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
-  // Still fetching /auth/me
+  // Do not decide until backend finishes verifying cookie
   if (loading) {
     return (
-      <div className="text-white p-10 text-center">
-        Loading...
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <Loader />
       </div>
     );
   }
 
-  // After loading is done and user is definitely null → redirect
+  // Not logged in after loading → redirect
   if (!user) {
     return <Navigate to="/login" replace />;
   }

@@ -25,7 +25,6 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Safe badge counts (avoid flicker when loading)
   const cartBadge =
     !loading && Number.isFinite(cartCount) && cartCount > 0 ? cartCount : 0;
 
@@ -34,13 +33,11 @@ const Navbar = () => {
       ? wishlistCount
       : 0;
 
-  // Close menu/dropdown on route change
   useEffect(() => {
     setMenuOpen(false);
     setTimeout(() => setDropdownOpen(false), 50);
   }, [location.pathname]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const close = (e) => {
       if (!e.target.closest(".dropdown-menu")) setDropdownOpen(false);
@@ -49,7 +46,6 @@ const Navbar = () => {
     return () => document.removeEventListener("click", close);
   }, []);
 
-  // Admin has separate layout
   if (user?.is_staff) return null;
 
   const navLinks = [

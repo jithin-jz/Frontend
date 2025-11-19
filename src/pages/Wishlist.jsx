@@ -5,7 +5,6 @@ const Wishlist = () => {
   const { wishlist, removeFromWishlist, addToCart } = useCart();
 
   const handleAddToCart = async (product) => {
-    // Remove first to avoid double-write flicker
     await removeFromWishlist(product.id);
     await addToCart(product);
   };
@@ -37,12 +36,12 @@ const Wishlist = () => {
               className="bg-gray-800 rounded-xl shadow hover:shadow-xl overflow-hidden flex flex-col group"
             >
               <Link to={`/products/${product.id}`} className="block">
-                <div className="overflow-hidden bg-gray-700">
+                <div className="w-full bg-gray-700">
                   <img
                     src={product.image}
                     alt={product.name}
                     onError={handleImageError}
-                    className="w-full h-56 object-contain transition-all duration-300 group-hover:scale-105"
+                    className="w-full h-auto object-contain"
                   />
                 </div>
               </Link>
