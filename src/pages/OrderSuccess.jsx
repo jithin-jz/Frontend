@@ -1,4 +1,14 @@
+import { useEffect } from "react";
+import { useCart } from "../context/CartContext";
+
 const OrderSuccess = () => {
+  const { clearCart } = useCart();
+
+  // Clear cart when this page loads (COD order success)
+  useEffect(() => {
+    clearCart();
+  }, [clearCart]);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-gray-800 rounded-2xl p-10 text-center shadow-xl space-y-6">

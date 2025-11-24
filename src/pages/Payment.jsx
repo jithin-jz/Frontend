@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
@@ -11,6 +11,10 @@ const Payment = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [useNewAddress, setUseNewAddress] = useState(true);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [saveAddress, setSaveAddress] = useState(false);
 
   const [address, setAddress] = useState({
     full_name: "",
@@ -21,6 +25,26 @@ const Payment = () => {
   });
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
+
+  // Load saved addresses
+  useEffect(() => {
+    if (user) {
+      loadAddresses();
+    }
+  }, [user]);
+
+  const loadAddresses = async () => {
+    try {
+      const res = await api.get("/orders/addresses/");
+      setSavedAddresses(res.data);
+      if (res.data.length > 0) {
+        setUseNewAddress(false);
+        setSelectedAddressId(res.data[0].id);
+      }
+    } catch {
+      // Ignore error if no addresses
+    }
+  };
 
   const handleChange = (e) => {
     setAddress((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -42,9 +66,9 @@ const Payment = () => {
 
   const placeOrder = async (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Prevent Strict Mode double submit
+    e.stopPropagation();
 
-    if (loading) return; // Prevent double fire manually
+    if (loading) return;
 
     if (!user) {
       toast.error("Please login!");
@@ -59,8 +83,6 @@ const Payment = () => {
     setLoading(true);
 
     try {
-      validateAddress();
-
       const formattedCart = cart.map((i) => ({
         id: i.product.id,
         name: i.product.name,
@@ -69,15 +91,33 @@ const Payment = () => {
       }));
 
       const payload = {
-        address,
         payment_method: paymentMethod,
         cart: formattedCart,
       };
 
+      // Handle address - use saved or new
+      if (useNewAddress) {
+        validateAddress();
+        payload.address = address;
+        
+        // Optionally save the address if checkbox is checked
+        if (saveAddress) {
+          try {
+            await api.post("/orders/addresses/", address);
+          } catch {
+            // Ignore save error, still create order
+          }
+        }
+      } else {
+        if (!selectedAddressId) {
+          throw new Error("Please select an address");
+        }
+        payload.address_id = selectedAddressId;
+      }
+
       const res = await api.post("/orders/create/", payload);
 
       if (paymentMethod === "cod") {
-        clearCart();
         toast.success("Order placed (Cash on Delivery)");
         navigate("/order-success");
         return;
@@ -108,13 +148,79 @@ const Payment = () => {
             Shipping Information
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input name="full_name" label="Full Name" value={address.full_name} onChange={handleChange} />
-            <Input name="phone" label="Phone Number" value={address.phone} onChange={handleChange} />
-            <Input name="street" label="Street Address" value={address.street} onChange={handleChange} full />
-            <Input name="city" label="City" value={address.city} onChange={handleChange} />
-            <Input name="pincode" label="Pincode" value={address.pincode} onChange={handleChange} />
-          </div>
+          {/* Address Selection */}
+          {savedAddresses.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={!useNewAddress}
+                    onChange={() => setUseNewAddress(false)}
+                    className="h-4 w-4 text-green-500"
+                  />
+                  <span>Use saved address</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={useNewAddress}
+                    onChange={() => setUseNewAddress(true)}
+                    className="h-4 w-4 text-green-500"
+                  />
+                  <span>Enter new address</span>
+                </label>
+              </div>
+
+              {/* Saved Address Dropdown */}
+              {!useNewAddress && (
+                <div>
+                  <select
+                    value={selectedAddressId}
+                    onChange={(e) => setSelectedAddressId(e.target.value)}
+                    className="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-md text-white"
+                    required
+                  >
+                    {savedAddresses.map((addr) => (
+                      <option key={addr.id} value={addr.id}>
+                        {addr.full_name} - {addr.street}, {addr.city}, {addr.pincode}
+                      </option>
+                    ))}
+                  </select>
+                  <Link
+                    to="/addresses"
+                    className="text-sm text-blue-400 hover:text-blue-300 mt-2 inline-block"
+                  >
+                    Manage Addresses →
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* New Address Form */}
+          {useNewAddress && (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input name="full_name" label="Full Name" value={address.full_name} onChange={handleChange} />
+                <Input name="phone" label="Phone Number" value={address.phone} onChange={handleChange} />
+                <Input name="street" label="Street Address" value={address.street} onChange={handleChange} full />
+                <Input name="city" label="City" value={address.city} onChange={handleChange} />
+                <Input name="pincode" label="Pincode" value={address.pincode} onChange={handleChange} />
+              </div>
+
+              {/* Save Address Checkbox */}
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input
+                  type="checkbox"
+                  checked={saveAddress}
+                  onChange={(e) => setSaveAddress(e.target.checked)}
+                  className="h-4 w-4 text-green-500"
+                />
+                <span>Save this address for future orders</span>
+              </label>
+            </>
+          )}
 
           <h2 className="text-xl font-semibold border-b border-gray-700 pb-2">
             Payment Method

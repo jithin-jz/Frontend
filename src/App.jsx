@@ -24,6 +24,7 @@ import Payment from "./pages/Payment";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderSuccess from "./pages/OrderSuccess";
 import ProfileDetails from "./pages/ProfileDetails";
+import ManageAddresses from "./pages/ManageAddresses";
 
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -70,6 +71,7 @@ const AppContent = () => {
                         <Route path="/payment-success" element={<PaymentSuccess />} />
                         <Route path="/order-success" element={<OrderSuccess />} />
                         <Route path="/profile" element={<ProfileDetails />} />
+                        <Route path="/addresses" element={<ManageAddresses />} />
                     </Route>
 
                     {/* Admin only */}
