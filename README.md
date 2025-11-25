@@ -1,4 +1,4 @@
-# Souled Store - Modern eCommerce Platform
+# Souled - Modern eCommerce Platform
 
 A full-stack eCommerce platform built with React, Vite, and Django REST Framework (DRF), featuring a modern UI with smooth animations and responsive design.
 
