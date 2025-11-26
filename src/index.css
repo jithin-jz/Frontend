@@ -5,10 +5,12 @@ html {
 }
 
 body {
+  /* Ensures vertical scrolling is always available and prevents horizontal overflow */
   overflow-y: scroll;
   margin: 0;
   padding: 0;
-  background-color: #1a202c; /* bg-gray-900 */
+  /* Set a dark background color for the body, matching bg-gray-900 */
+  background-color: #1a202c;
 }
 
 /* ---------- Form Input Styling ---------- */
@@ -17,18 +19,21 @@ body {
          focus:outline-none focus:ring-2 focus:ring-green-500;
 }
 
-/* ---------- Seamless Marquee Animation ---------- */
+/* ---------- Seamless Marquee Animation Keyframes ---------- */
 @keyframes marquee {
   0% {
     transform: translateX(0%);
   }
+  /* Moves content half its width; requires duplicated content for seamless loop */
   100% {
     transform: translateX(-50%);
   }
 }
 
+/* ---------- Marquee Animation Class Application ---------- */
 .animate-marquee {
   display: flex;
+  /* 20s duration, constant speed, infinite loop */
   animation: marquee 20s linear infinite;
 }
 
@@ -37,11 +42,13 @@ body {
   @apply transition-transform duration-300 transform hover:scale-105;
 }
 
-/* ---------- Reusable Button Style ---------- */
+/* ---------- Reusable Button Style (Pill-shaped, Black) ---------- */
 .btn-black-rounded {
   @apply px-4 py-2 rounded-full bg-black text-white text-sm font-semibold 
          hover:bg-gray-900 transition-all;
 }
+
+/* ---------- Bar Stretching Animation (Often used for loaders) ---------- */
 @keyframes stretch {
   0%, 100% {
     transform: scaleY(1);
@@ -52,4 +59,3 @@ body {
     opacity: 1;
   }
 }
-

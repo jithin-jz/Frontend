@@ -14,9 +14,7 @@ const bannerImages = [
   "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/spiderman_homepage.jpg?format=webp&w=1500&dpr=1.5",
 ];
 
-/* -------------------------------------------
-   Product Card
-------------------------------------------- */
+/* PRODUCT CARD */
 const ProductCard = ({ product, isWishlisted, onToggleWishlist }) => {
   const toggle = useCallback(
     (e) => {
@@ -28,15 +26,15 @@ const ProductCard = ({ product, isWishlisted, onToggleWishlist }) => {
   );
 
   return (
-    <div className="group relative">
+    <div className="group relative w-full">
       <button
         onClick={toggle}
-        className="absolute top-2 right-2 z-10 p-2 rounded-full bg-gray-900/80 backdrop-blur-sm"
+        className="absolute top-1.5 right-1.5 z-10 p-1.5 rounded-full bg-black/60 backdrop-blur-sm"
       >
         {isWishlisted ? (
-          <FaHeart className="text-red-500" />
+          <FaHeart className="text-red-500 text-lg" />
         ) : (
-          <FiHeart className="text-gray-400 group-hover:text-red-500" />
+          <FiHeart className="text-gray-300 text-lg group-hover:text-red-500" />
         )}
       </button>
 
@@ -45,22 +43,24 @@ const ProductCard = ({ product, isWishlisted, onToggleWishlist }) => {
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-auto object-contain transition-opacity duration-300 group-hover:scale-105"
+            className="w-full aspect-[3/4] object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 
-        <div className="mt-3">
-          <h3 className="text-white font-medium">{product.name}</h3>
-          <p className="text-gray-300 font-bold">₹{product.price}</p>
+        <div className="mt-2">
+          <h3 className="text-white text-sm sm:text-base font-medium truncate">
+            {product.name}
+          </h3>
+          <p className="text-gray-300 font-bold text-sm sm:text-base">
+            ₹{product.price}
+          </p>
         </div>
       </Link>
     </div>
   );
 };
 
-/* -------------------------------------------
-   Home Page
-------------------------------------------- */
+/* HOME PAGE */
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
@@ -70,7 +70,6 @@ const Home = () => {
   const { addToWishlist, removeFromWishlist, isProductWishlisted } = useCart();
   const { user } = useAuth();
 
-  /* Preload banner images */
   useEffect(() => {
     bannerImages.forEach((src) => {
       const img = new Image();
@@ -78,7 +77,6 @@ const Home = () => {
     });
   }, []);
 
-  /* Fetch products */
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -97,7 +95,6 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  /* Banner rotation */
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
@@ -106,7 +103,6 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-  /* Wishlist toggle */
   const handleToggleWishlist = useCallback(
     (product) => {
       if (!user) {
@@ -134,32 +130,40 @@ const Home = () => {
   }
 
   return (
-    <div className="space-y-12 pb-0 bg-gray-900 text-white">
+    <div className="space-y-12 pb-4 bg-gray-900 text-white">
 
-      {/* Banner */}
-      <div className="w-full overflow-hidden relative">
+      {/* BANNER */}
+      <div className="w-full relative">
         <img
           src={bannerImages[currentBanner]}
           alt="Banner"
-          className="w-full h-auto object-cover transition-opacity duration-700 opacity-100"
+          className="
+            w-full 
+            h-48 sm:h-64 
+            md:h-auto 
+            object-cover 
+            md:object-fill 
+            transition-opacity 
+            duration-700
+          "
         />
 
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
           {bannerImages.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentBanner(index)}
-              className={`h-2 w-2 rounded-full ${
-                index === currentBanner ? "bg-white" : "bg-white/50"
+              className={`h-2.5 w-2.5 rounded-full ${
+                index === currentBanner ? "bg-white" : "bg-white/40"
               }`}
             />
           ))}
         </div>
       </div>
 
-      {/* Marquee */}
+      {/* MARQUEE */}
       <div className="overflow-hidden py-2">
-        <div className="flex gap-8 animate-marquee whitespace-nowrap min-w-max">
+        <div className="flex gap-6 animate-marquee whitespace-nowrap min-w-max">
           {[
             "🎉 Free Delivery Over ₹499",
             "🔥 Flat 50% Off - Marvel Gear",
@@ -170,7 +174,7 @@ const Home = () => {
           ].map((offer, index) => (
             <div
               key={index}
-              className="flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium text-white bg-gray-800 shadow-md"
+              className="px-4 py-2 rounded-full text-xs sm:text-sm text-white bg-gray-800 shadow-md"
             >
               {offer}
             </div>
@@ -178,12 +182,10 @@ const Home = () => {
         </div>
       </div>
 
-      {/* ---------------------- */}
-      {/* NEW ARRIVALS FIRST     */}
-      {/* ---------------------- */}
-      <section className="container mx-auto px-4">
-        <h2 className="mb-6 text-2xl font-bold">New Arrivals</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      {/* NEW ARRIVALS */}
+      <section className="px-4">
+        <h2 className="mb-4 text-xl sm:text-2xl font-bold">New Arrivals</h2>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:grid-cols-4">
           {newArrivals.map((product) => (
             <ProductCard
               key={product.id}
@@ -195,12 +197,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ---------------------- */}
-      {/* FEATURED BELOW         */}
-      {/* ---------------------- */}
-      <section className="container mx-auto px-4">
-        <h2 className="mb-6 text-2xl font-bold">Featured Products</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      {/* FEATURED PRODUCTS */}
+      <section className="px-4">
+        <h2 className="mb-4 text-xl sm:text-2xl font-bold">Featured Products</h2>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:grid-cols-4">
           {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -212,7 +212,7 @@ const Home = () => {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 text-center mb-0">
+      <div className="px-4 text-center pb-0">
         <Link
           to="/products"
           className="inline-block rounded-full bg-white text-black px-8 py-3 font-medium hover:bg-gray-200 transition-colors"

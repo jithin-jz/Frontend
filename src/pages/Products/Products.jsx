@@ -6,6 +6,7 @@ import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import Loader from "../../components/Loader";
 
+// Assume these components are responsive internally
 import Filters from "./Filters";
 import Section from "./Section";
 
@@ -30,11 +31,13 @@ const Products = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // State for filters
   const [selectedPrices, setSelectedPrices] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(false); // Used to toggle visibility on smaller screens
 
+  // Contexts
   const {
     wishlist,
     addToWishlist,
@@ -43,11 +46,10 @@ const Products = () => {
     isProductWishlisted,
     cart,
   } = useCart();
-
   const { user } = useAuth();
 
   // --------------------------------------
-  // Apply category filter if coming from SingleProduct
+  // Apply category filter if coming from SingleProduct (Functionality unchanged)
   // --------------------------------------
   useEffect(() => {
     if (location.state?.category) {
@@ -59,7 +61,7 @@ const Products = () => {
   }, [location.state]);
 
   // --------------------------------------
-  // Fetch Products using backend filtering
+  // Fetch Products using backend filtering (Functionality unchanged)
   // --------------------------------------
   useEffect(() => {
     const fetchProducts = async () => {
@@ -68,6 +70,7 @@ const Products = () => {
 
         if (searchTerm.trim()) params.search = searchTerm;
 
+        // Backend filtering only supports single category/price range selection based on the original code
         if (selectedCategories.length === 1)
           params.category = selectedCategories[0].toLowerCase();
 
@@ -91,7 +94,7 @@ const Products = () => {
   }, [searchTerm, selectedCategories, selectedPrices]);
 
   // --------------------------------------
-  // Wishlist Handling
+  // Wishlist Handling (Functionality unchanged)
   // --------------------------------------
   const handleToggleWishlist = useCallback(
     (product) => {
@@ -112,7 +115,7 @@ const Products = () => {
   );
 
   // --------------------------------------
-  // Add to Cart
+  // Add to Cart (Functionality unchanged)
   // --------------------------------------
   const handleAddToCart = useCallback(
     (product) => {
@@ -134,7 +137,7 @@ const Products = () => {
   );
 
   // --------------------------------------
-  // Group products by category
+  // Group products by category (Functionality unchanged)
   // --------------------------------------
   const groupedByCategory = useMemo(
     () =>
@@ -149,7 +152,7 @@ const Products = () => {
   );
 
   // --------------------------------------
-  // Filter Toggles
+  // Filter Toggles (Functionality unchanged)
   // --------------------------------------
   const togglePriceFilter = (range) => {
     setSelectedPrices((prev) =>
@@ -164,37 +167,52 @@ const Products = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 bg-gray-900 text-white mb-0">
-      <Filters
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        showFilters={showFilters}
-        setShowFilters={setShowFilters}
-        selectedPrices={selectedPrices}
-        togglePriceFilter={togglePriceFilter}
-        selectedCategories={selectedCategories}
-        toggleCategoryFilter={toggleCategoryFilter}
-        priceRanges={priceRanges}
-        categories={categories}
-      />
+    // Responsive container setup: uses full width on small screens, centers content.
+    <div className="min-h-screen bg-gray-900 text-white pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/*
+          Filters component is passed props to control its visibility.
+          The internal implementation of Filters must handle the mobile view,
+          for example, by using a fixed/modal view when showFilters is true on small screens.
+        */}
+        <Filters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          // The responsive logic for showing/hiding the filter UI on mobile is handled by
+          // the 'showFilters' state and the 'Filters' component's internal design.
+          showFilters={showFilters}
+          setShowFilters={setShowFilters}
+          selectedPrices={selectedPrices}
+          togglePriceFilter={togglePriceFilter}
+          selectedCategories={selectedCategories}
+          toggleCategoryFilter={toggleCategoryFilter}
+          priceRanges={priceRanges}
+          categories={categories}
+        />
 
-      {loading ? (
-        <Loader />
-      ) : allProducts.length === 0 ? (
-        <p className="text-center text-gray-400">No products found.</p>
-      ) : (
-        groupedByCategory.map(({ category, banner, products }) => (
-          <Section
-            key={category}
-            category={category}
-            banner={banner}
-            products={products}
-            onToggleWishlist={handleToggleWishlist}
-            onAddToCart={handleAddToCart}
-            wishlist={wishlist}
-          />
-        ))
-      )}
+        <div className="mt-8">
+          {loading ? (
+            <Loader />
+          ) : allProducts.length === 0 ? (
+            <p className="text-center text-xl text-gray-400 py-10">
+              No products found matching the criteria.
+            </p>
+          ) : (
+            // The product sections are rendered here
+            groupedByCategory.map(({ category, banner, products }) => (
+              <Section
+                key={category}
+                category={category}
+                banner={banner}
+                products={products}
+                onToggleWishlist={handleToggleWishlist}
+                onAddToCart={handleAddToCart}
+                wishlist={wishlist}
+              />
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 };
