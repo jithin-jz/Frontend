@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 
-const Orders = () => {
+export default function Orders() {
   const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,186 +27,127 @@ const Orders = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-16 text-gray-400">
-        Loading orders...
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-gray-400">
+        <div className="text-center">
+          <div className="animate-pulse mb-4">Loading orders...</div>
+          <div className="text-sm">If this takes too long, try refreshing.</div>
+        </div>
       </div>
     );
   }
 
   if (orders.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white px-4">
-        <h2 className="text-3xl font-bold mb-4">No Orders Found</h2>
-        <p className="text-gray-400">You haven't placed any orders yet.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white px-6">
+        <div className="max-w-xl text-center">
+          <svg className="mx-auto mb-6 w-24 h-24 opacity-60" viewBox="0 0 24 24" fill="none">
+            <path d="M3 6h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M5 6v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M9 10h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+
+          <h2 className="text-3xl font-semibold mb-2">No orders yet</h2>
+          <p className="text-gray-400">
+            You haven't placed any orders. Browse products and complete a purchase to see it here.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white py-10 px-4 md:px-10">
-      <h2 className="text-3xl font-bold mb-10 text-center">Your Orders</h2>
+    <div className="min-h-screen bg-slate-900 text-white py-10 px-4 md:px-12">
+      <div className="max-w-6xl mx-auto">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold">Your Orders</h1>
+          <p className="text-sm text-gray-400">{orders.length} order{orders.length > 1 ? "s" : ""} placed</p>
+        </header>
 
-      <div className="space-y-8 max-w-5xl mx-auto">
-        {orders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-lg"
-          >
-            {/* Header */}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-xl font-bold">Order #{order.id}</h3>
-                <p className="text-sm text-gray-400">
-                  Placed on: {new Date(order.created_at).toLocaleDateString()}{" "}
-                  at {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
+        <section className="grid gap-6 lg:grid-cols-2">
+          {orders.map((order) => (
+            <article
+              key={order.id}
+              className="group bg-gradient-to-tr from-slate-800/60 to-slate-800/40 border border-slate-700 rounded-2xl p-6 shadow-lg hover:scale-[1.01] transition-transform"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold">Order #{order.id}</h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(order.created_at).toLocaleDateString()} at{" "}
+                    {new Date(order.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex gap-2">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full border ${
+                        order.payment_status === "paid"
+                          ? "bg-green-900/30 text-green-300 border-green-500"
+                          : "bg-yellow-900/30 text-yellow-300 border-yellow-500"
+                      }`}
+                    >
+                      {order.payment_status?.toUpperCase()}
+                    </span>
+
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full border ${
+                        order.order_status === "processing"
+                          ? "bg-blue-900/30 text-blue-300 border-blue-500"
+                          : order.order_status === "shipped"
+                          ? "bg-purple-900/30 text-purple-300 border-purple-500"
+                          : "bg-emerald-900/30 text-emerald-300 border-emerald-500"
+                      }`}
+                    >
+                      {order.order_status?.toUpperCase()}
+                    </span>
+                  </div>
+
+                  <div className="text-right text-sm text-gray-400">
+                    Payment:{" "}
+                    <span className="text-gray-200 font-medium capitalize">
+                      {order.payment_method}
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium tracking-wide ${
-                    order.payment_status === "paid"
-                      ? "bg-green-500/10 text-green-300 border border-green-400"
-                      : "bg-yellow-500/10 text-yellow-300 border border-yellow-400"
-                  }`}
-                >
-                  {order.payment_status?.toUpperCase()}
-                </span>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium tracking-wide ${
-                    order.order_status === "processing"
-                      ? "bg-blue-500/10 text-blue-300 border border-blue-400"
-                      : order.order_status === "shipped"
-                      ? "bg-purple-500/10 text-purple-300 border border-purple-400"
-                      : "bg-emerald-500/10 text-emerald-300 border border-emerald-400"
-                  }`}
-                >
-                  {order.order_status?.toUpperCase()}
-                </span>
-              </div>
-            </div>
-
-            {/* Address */}
-            <div className="mb-4">
-              <h4 className="text-md font-semibold">Shipping Address</h4>
-              <div className="text-gray-300 text-sm mt-1 leading-relaxed">
-                {order.address ? (
-                  <>
-                    <p>{order.address.full_name}</p>
-                    <p>{order.address.phone}</p>
-                    <p>
-                      {order.address.street}, {order.address.city} - {order.address.pincode}
-                    </p>
-                  </>
-                ) : (
-                  <p>Address information missing.</p>
-                )}
-              </div>
-            </div>
-
-            {/* Payment Status */}
-            <div className="mb-4">
-              <h4 className="text-md font-semibold">Payment Status</h4>
-              <div className="mt-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium tracking-wide ${
-                    order.payment_status === "paid"
-                      ? "bg-green-500/10 text-green-300 border border-green-400"
-                      : "bg-yellow-500/10 text-yellow-300 border border-yellow-400"
-                  }`}
-                >
-                  {order.payment_status?.toUpperCase()}
-                </span>
-                <p className="text-sm text-gray-400 mt-2">
-                  {order.payment_status === "paid" && "Payment has been received"}
-                  {order.payment_status === "unpaid" && "Waiting for payment"}
-                </p>
-              </div>
-            </div>
-
-            {/* Order Status */}
-            <div className="mb-4">
-              <h4 className="text-md font-semibold">Order Status</h4>
-              <div className="mt-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium tracking-wide ${
-                    order.order_status === "processing"
-                      ? "bg-blue-500/10 text-blue-300 border border-blue-400"
-                      : order.order_status === "shipped"
-                      ? "bg-purple-500/10 text-purple-300 border border-purple-400"
-                      : "bg-emerald-500/10 text-emerald-300 border border-emerald-400"
-                  }`}
-                >
-                  {order.order_status?.toUpperCase()}
-                </span>
-                <p className="text-sm text-gray-400 mt-2">
-                  {order.order_status === "processing" && "Your order is being prepared"}
-                  {order.order_status === "shipped" && "Your order has been dispatched and is on the way"}
-                  {order.order_status === "delivered" && "Your order has been successfully delivered"}
-                </p>
-              </div>
-            </div>
-
-            {/* Payment Method */}
-            <div className="mb-4">
-              <h4 className="text-md font-semibold">Payment Method</h4>
-              <p className="text-gray-300 text-sm capitalize">
-                {order.payment_method}
-              </p>
-            </div>
-
-            {/* Items */}
-            <div className="border-t border-slate-600 pt-4">
-              <h4 className="font-semibold mb-3">Items</h4>
-
-              <div className="divide-y divide-slate-700">
-                {order.items?.length > 0 ? (
-                  order.items.map((item) => (
-                    <div key={item.id} className="flex justify-between py-3">
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={item.image}
-                          alt={item.product_name}
-                          className="w-14 h-14 object-cover rounded-lg border border-slate-700"
-                        />
-                        <div>
-                          <p className="font-medium">{item.product_name}</p>
-                          <p className="text-sm text-gray-400">
-                            Qty: {item.quantity}
-                          </p>
+              {/* Address */}
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2">
+                  <h4 className="text-sm font-semibold text-gray-200">Shipping</h4>
+                  <div className="mt-2 text-sm text-gray-300 leading-tight">
+                    {order.address ? (
+                      <>
+                        <div className="font-medium">{order.address.full_name}</div>
+                        <div className="mt-1">
+                          {order.address.street}, {order.address.city} - {order.address.pincode}
                         </div>
-                      </div>
-                      <p className="text-green-400 font-semibold">
-                        ₹{(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-400 py-3">No items found for this order.</p>
-                )}
-              </div>
-            </div>
+                        <div className="mt-1 text-xs text-gray-400">{order.address.phone}</div>
+                      </>
+                    ) : (
+                      <div className="text-gray-400">Address information missing.</div>
+                    )}
+                  </div>
+                </div>
 
-            {/* Total */}
-            <div className="border-t border-slate-700 pt-4 text-right">
-              <p className="text-gray-300 text-sm">
-                Subtotal:{" "}
-                <span className="text-white font-semibold">
-                  ₹{Number(order.total_amount).toFixed(2)}
-                </span>
-              </p>
-              <p className="text-gray-300 text-sm">
-                Shipping: <span className="text-green-400">Free</span>
-              </p>
-              <p className="text-xl font-bold mt-2 text-white">
-                Total: ₹{Number(order.total_amount).toFixed(2)}
-              </p>
-            </div>
-          </div>
-        ))}
+                <div className="md:col-span-1 text-right">
+                  <div className="text-sm text-gray-400">Subtotal</div>
+                  <div className="text-lg font-semibold text-white">
+                    ₹{Number(order.total_amount).toFixed(2)}
+                  </div>
+                  <div className="text-xs text-gray-400 mt-2">
+                    Shipping: <span className="text-green-400">Free</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </section>
       </div>
     </div>
   );
-};
-
-export default Orders;
+}
