@@ -115,20 +115,20 @@ const AdminUserDetails = () => {
                         Order #{order.id}
                       </Link>
                       <p className="text-slate-400 text-sm">
-                        {new Date(order.date).toLocaleDateString()}
+                        {new Date(order.created_at).toLocaleDateString()}
                       </p>
                     </div>
 
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        order.status === "Processing"
+                        order.order_status === "processing"
                           ? "bg-yellow-200 text-yellow-900"
-                          : order.status === "Shipped"
+                          : order.order_status === "shipped"
                           ? "bg-blue-200 text-blue-900"
                           : "bg-green-200 text-green-900"
                       }`}
                     >
-                      {order.status}
+                      {order.order_status}
                     </span>
                   </div>
 
@@ -137,7 +137,7 @@ const AdminUserDetails = () => {
                     <div className="mb-4">
                       <h4 className="font-medium mb-1">Shipping Address</h4>
                       <div className="text-slate-300 text-sm leading-relaxed">
-                        <p>{order.address.name}</p>
+                        <p>{order.address.full_name}</p>
                         <p>{order.address.phone}</p>
                         <p>{order.address.street}</p>
                         <p>
@@ -150,8 +150,8 @@ const AdminUserDetails = () => {
                   {/* PAYMENT */}
                   <div className="mb-4">
                     <h4 className="font-medium mb-1">Payment Method</h4>
-                    <p className="text-slate-300">{order.paymentMethod}</p>
-                    {order.paymentMethod === "UPI" && order.upiId && (
+                    <p className="text-slate-300">{order.payment_method}</p>
+                    {order.payment_method === "UPI" && order.upiId && (
                       <p className="text-slate-400 text-sm">
                         UPI ID: {order.upiId}
                       </p>
@@ -170,11 +170,11 @@ const AdminUserDetails = () => {
                           <div className="flex items-center gap-4">
                             <img
                               src={item.image}
-                              alt={item.name}
+                              alt={item.product_name}
                               className="w-14 h-14 object-cover rounded"
                             />
                             <div>
-                              <p className="font-medium">{item.name}</p>
+                              <p className="font-medium">{item.product_name}</p>
                               <p className="text-slate-400 text-sm">
                                 Qty: {item.quantity || 1}
                               </p>
@@ -195,14 +195,14 @@ const AdminUserDetails = () => {
                       <p className="text-slate-300">
                         Subtotal:{" "}
                         <span className="font-medium">
-                          ₹{order.total?.toFixed(2)}
+                          ₹{Number(order.total_amount).toFixed(2)}
                         </span>
                       </p>
                       <p className="text-slate-300">
                         Shipping: <span className="font-medium">Free</span>
                       </p>
                       <p className="text-lg font-bold mt-2">
-                        Total: ₹{order.total?.toFixed(2)}
+                        Total: ₹{Number(order.total_amount).toFixed(2)}
                       </p>
                     </div>
                   </div>

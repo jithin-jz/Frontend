@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../store/useAuthStore";
 import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 
 const Register = () => {
-  const { register, googleLogin } = useAuth();
+  const { register, googleLogin } = useAuthStore();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -29,6 +30,7 @@ const Register = () => {
     try {
       await register(firstName, lastName, email, password);
       toast.success("Account created successfully!");
+      navigate("/");
     } catch (err) {
       console.log("Register error:", err.response?.data);
       
@@ -66,6 +68,7 @@ const Register = () => {
     try {
       await googleLogin(response.credential);
       toast.success("Google login successful!");
+      navigate("/");
     } catch (err) {
       console.log("Google login error:", err.response?.data);
       

@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
+import useCartStore from "../store/useCartStore";
+import useAuthStore from "../store/useAuthStore";
 import { toast } from "react-toastify";
 import api from "../utils/api";
 
 const SingleProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
-  const { user } = useAuth();
+  const addToCart = useCartStore((state) => state.addToCart);
+  const { user } = useAuthStore();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);

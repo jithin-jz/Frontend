@@ -2,8 +2,8 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../../utils/api";
 import { toast } from "react-toastify";
-import { useCart } from "../../context/CartContext";
-import { useAuth } from "../../context/AuthContext";
+import useCartStore from "../../store/useCartStore";
+import useAuthStore from "../../store/useAuthStore";
 import Loader from "../../components/Loader";
 
 // Assume these components are responsive internally
@@ -38,15 +38,14 @@ const Products = () => {
   const [showFilters, setShowFilters] = useState(false); // Used to toggle visibility on smaller screens
 
   // Contexts
-  const {
-    wishlist,
-    addToWishlist,
-    removeFromWishlist,
-    addToCart,
-    isProductWishlisted,
-    cart,
-  } = useCart();
-  const { user } = useAuth();
+  const wishlist = useCartStore((state) => state.wishlist);
+  const addToWishlist = useCartStore((state) => state.addToWishlist);
+  const removeFromWishlist = useCartStore((state) => state.removeFromWishlist);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const isProductWishlisted = useCartStore((state) => state.isProductWishlisted);
+  const cart = useCartStore((state) => state.cart);
+  
+  const { user } = useAuthStore();
 
   // --------------------------------------
   // Apply category filter if coming from SingleProduct (Functionality unchanged)

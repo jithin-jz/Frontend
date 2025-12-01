@@ -1,10 +1,11 @@
-import { useAuth } from "../context/AuthContext";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
+import { FiUser, FiMapPin, FiPackage, FiHeart } from "react-icons/fi";
 
 const ProfileDetails = () => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuthStore();
   const [addresses, setAddresses] = useState([]);
   const [loadingAddresses, setLoadingAddresses] = useState(true);
 

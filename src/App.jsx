@@ -1,10 +1,11 @@
 // src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import { CartProvider } from "./context/CartContext";
+import useAuthStore from "./store/useAuthStore";
+import { setLogoutCallback } from "./utils/api";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -37,9 +38,32 @@ import AddProduct from "./admin/AddProduct";
 import EditProduct from "./admin/EditProduct";
 import AdminUserDetails from "./admin/AdminUserDetails";
 import AdminOrderManagement from "./admin/AdminOrderManagement";
+import AdminOrderDetails from "./admin/AdminOrderDetails";
 
 const AppContent = () => {
-    const { user, loading } = useAuth();
+    const { user, loading, loadUser, logout } = useAuthStore();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        loadUser();
+    }, [loadUser]);
+
+    // Reload cart/wishlist when user is authenticated
+    useEffect(() => {
+        if (user) {
+            import("./store/useCartStore").then(({ default: useCartStore }) => {
+                useCartStore.getState().loadCart();
+                useCartStore.getState().loadWishlist();
+            });
+        }
+    }, [user]);
+
+    useEffect(() => {
+        setLogoutCallback(() => {
+            logout();
+            navigate("/login");
+        });
+    }, [logout, navigate]);
 
     if (loading) return <Loader />;
 
@@ -84,6 +108,7 @@ const AppContent = () => {
                         <Route path="/admin/products/add" element={<AddProduct />} />
                         <Route path="/admin/products/edit/:id" element={<EditProduct />} />
                         <Route path="/admin/orders" element={<AdminOrderManagement />} />
+                        <Route path="/admin/orders/:id" element={<AdminOrderDetails />} />
                         <Route path="/admin/reports" element={<Reports />} />
                     </Route>
                 </Routes>
@@ -96,12 +121,8 @@ const AppContent = () => {
 
 const App = () => (
     <Router>
-        <AuthProvider>
-            <CartProvider>
-                <AppContent />
-                <ToastContainer position="bottom-right" autoClose={1000} theme="colored" />
-            </CartProvider>
-        </AuthProvider>
+        <AppContent />
+        <ToastContainer position="bottom-right" autoClose={1000} theme="colored" />
     </Router>
 );
 

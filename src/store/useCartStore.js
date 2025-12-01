@@ -1,0 +1,129 @@
+import { create } from 'zustand';
+import api from '../utils/api';
+import useAuthStore from './useAuthStore';
+
+const useCartStore = create((set, get) => ({
+  cart: [],
+  wishlistItems: [],
+  wishlist: [],
+  loading: false,
+
+  loadCart: async () => {
+    if (!useAuthStore.getState().user) {
+        set({ cart: [] });
+        return;
+    }
+
+    set({ loading: true });
+    try {
+      const res = await api.get("/cart/");
+      set({ cart: res.data.items || [] });
+    } catch (error) {
+      console.error("Load cart failed", error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  loadWishlist: async () => {
+    if (!useAuthStore.getState().user) {
+        set({ wishlistItems: [], wishlist: [] });
+        return;
+    }
+
+    try {
+      const res = await api.get("/cart/wishlist/");
+      const items = res.data.items || [];
+      set({ 
+          wishlistItems: items,
+          wishlist: items.map((it) => it.product)
+      });
+    } catch (error) {
+      set({ wishlistItems: [], wishlist: [] });
+    }
+  },
+
+  addToCart: async (product, quantity = 1) => {
+    if (!useAuthStore.getState().user) return;
+    try {
+      await api.post("/cart/add/", { product_id: product.id, quantity });
+      await get().loadCart();
+    } catch (error) {
+        console.error("Add to cart failed", error);
+    }
+  },
+
+  removeFromCart: async (itemId) => {
+    try {
+      await api.delete(`/cart/remove/${itemId}/`);
+      await get().loadCart();
+    } catch (error) {
+        console.error("Remove from cart failed", error);
+    }
+  },
+
+  updateQuantity: async (itemId, qty) => {
+    if (qty < 1) return get().removeFromCart(itemId);
+    try {
+      await api.patch(`/cart/update/${itemId}/`, { quantity: qty });
+      await get().loadCart();
+    } catch (error) {
+        console.error("Update quantity failed", error);
+    }
+  },
+
+  clearCart: async () => {
+    if (!useAuthStore.getState().user) return;
+    try {
+      await api.delete("/cart/clear/");
+      await get().loadCart();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  addToWishlist: async (product) => {
+    if (!useAuthStore.getState().user) return;
+    try {
+      await api.post("/cart/wishlist/add/", { product_id: product.id });
+      await get().loadWishlist();
+    } catch (error) {
+        console.error("Add to wishlist failed", error);
+    }
+  },
+
+  removeFromWishlist: async (productId) => {
+    if (!useAuthStore.getState().user) return;
+    try {
+      const { wishlistItems } = get();
+      const item = wishlistItems.find((it) => it.product?.id === productId);
+      if (!item) return;
+
+      await api.delete(`/cart/wishlist/remove/${item.id}/`);
+      await get().loadWishlist();
+    } catch (error) {
+        console.error("Remove from wishlist failed", error);
+    }
+  },
+
+  isProductWishlisted: (productId) => {
+    return get().wishlist.some((p) => p.id === productId);
+  },
+  
+  reset: () => {
+      set({ cart: [], wishlistItems: [], wishlist: [] });
+  },
+}));
+
+// Subscribe to Auth changes
+useAuthStore.subscribe((state) => state.user, (user) => {
+    if (user) {
+        useCartStore.getState().loadCart();
+        useCartStore.getState().loadWishlist();
+    } else {
+        useCartStore.getState().reset();
+    }
+});
+
+export default useCartStore;

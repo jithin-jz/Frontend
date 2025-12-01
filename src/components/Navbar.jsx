@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useCart } from "../context/CartContext";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
+import useCartStore from "../store/useCartStore";
 
 import {
   FiLogOut,
@@ -18,12 +18,19 @@ import {
 } from "react-icons/fi";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
-  const { cartCount, wishlistCount, loading } = useCart();
+  const { user, logout } = useAuthStore();
+  const cart = useCartStore((state) => state.cart);
+  const wishlistItems = useCartStore((state) => state.wishlistItems);
+  const loading = useCartStore((state) => state.loading);
+  
+  const navigate = useNavigate();
   const location = useLocation();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const cartCount = cart.reduce((sum, it) => sum + (it.quantity || 1), 0);
+  const wishlistCount = wishlistItems.length;
 
   const cartBadge =
     !loading && Number.isFinite(cartCount) && cartCount > 0 ? cartCount : 0;
@@ -32,6 +39,11 @@ const Navbar = () => {
     !loading && Number.isFinite(wishlistCount) && wishlistCount > 0
       ? wishlistCount
       : 0;
+      
+  const handleLogout = async () => {
+      await logout();
+      navigate("/login");
+  };
 
   useEffect(() => {
     setMenuOpen(false);
@@ -142,7 +154,7 @@ const Navbar = () => {
                     </Link>
 
                     <button
-                      onClick={logout}
+                      onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm hover:bg-slate-700"
                     >
                       <FiLogOut className="inline-block mr-2" />
@@ -222,7 +234,7 @@ const Navbar = () => {
               ))}
 
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="flex items-center gap-2 p-2 text-white hover:bg-slate-700 rounded-md"
               >
                 <FiLogOut /> Logout

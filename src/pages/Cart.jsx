@@ -1,14 +1,32 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import useCartStore from "../store/useCartStore";
 import { toast } from "react-toastify";
 
 const Cart = () => {
-  const { cart, cartTotal, removeFromCart, updateQuantity, clearCart } = useCart();
+  const cart = useCartStore((state) => state.cart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  const cartTotal = cart.reduce(
+    (sum, it) => sum + (it.product?.price || 0) * (it.quantity || 1),
+    0
+  );
 
   const handleCheckout = () => {
     toast.success("Proceeding to checkout");
   };
+
+  const loading = useCartStore((state) => state.loading);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (

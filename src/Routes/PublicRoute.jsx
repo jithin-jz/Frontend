@@ -1,16 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import Loader from "../components/Loader";
+import useAuthStore from "../store/useAuthStore";
 
 const PublicRoute = () => {
-    const { user, loading, isAdmin } = useAuth();
+    const { user, loading } = useAuthStore();
 
-    if (loading) {
-        return <Loader />;
-    }
+    if (loading) return null;
 
     if (user) {
-        return <Navigate to={isAdmin ? "/admin/dashboard" : "/"} replace />;
+        return <Navigate to={user.is_staff ? "/admin/dashboard" : "/"} replace />;
     }
 
     return <Outlet />;

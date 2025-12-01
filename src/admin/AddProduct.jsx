@@ -8,25 +8,33 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
+    description: '',
     price: '',
     category: 'Men',
     stock: '',
-    image: ''
+    image: null
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, files } = e.target;
+    if (name === 'image') {
+      setFormData((prev) => ({
+        ...prev,
+        image: files[0]
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, price, category, stock, image } = formData;
+    const { name, description, price, category, stock, image } = formData;
 
-    if (!name || !price || !category || !stock || !image) {
+    if (!name || !description || !price || !category || !stock || !image) {
       toast.error('Please fill out all fields');
       return;
     }
@@ -36,16 +44,25 @@ const AddProduct = () => {
       return;
     }
 
+    const data = new FormData();
+    data.append('name', name);
+    data.append('description', description);
+    data.append('price', price);
+    data.append('category', category.toLowerCase());
+    data.append('stock', stock);
+    data.append('image', image);
+
     try {
-      await api.post('/products', {
-        ...formData,
-        price: parseFloat(price),
-        stock: parseInt(stock)
+      await api.post('/products/create/', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       toast.success('Product added successfully');
       navigate('/admin/products');
     } catch (error) {
-      toast.error('Failed to add product');
+      const errorMessage = error.response?.data?.error || error.response?.data?.description?.[0] || 'Failed to add product';
+      toast.error(errorMessage);
     }
   };
 
@@ -69,6 +86,20 @@ const AddProduct = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Iron Man T-Shirt"
+                className="w-full p-3 rounded-lg bg-slate-800 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label htmlFor="description" className="block text-sm mb-1 font-semibold">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Enter product description..."
+                rows="3"
                 className="w-full p-3 rounded-lg bg-slate-800 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-cyan-500"
               />
             </div>
@@ -120,15 +151,14 @@ const AddProduct = () => {
 
             {/* Image */}
             <div>
-              <label htmlFor="image" className="block text-sm mb-1 font-semibold">Image URL</label>
+              <label htmlFor="image" className="block text-sm mb-1 font-semibold">Product Image</label>
               <input
                 id="image"
-                type="url"
+                type="file"
                 name="image"
-                value={formData.image}
+                accept="image/*"
                 onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-                className="w-full p-3 rounded-lg bg-slate-800 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full p-3 rounded-lg bg-slate-800 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-cyan-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500 file:text-white hover:file:bg-cyan-600"
               />
             </div>
 

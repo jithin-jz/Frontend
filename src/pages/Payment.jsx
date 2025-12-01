@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
+import useCartStore from "../store/useCartStore";
+import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 
 const Payment = () => {
-  const { cart, cartTotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const cart = useCartStore((state) => state.cart);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const { user } = useAuthStore();
+  
+  const cartTotal = cart.reduce(
+    (sum, it) => sum + (it.product?.price || 0) * (it.quantity || 1),
+    0
+  );
+  
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);

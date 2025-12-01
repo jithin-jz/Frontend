@@ -29,21 +29,22 @@ const chartTheme = {
 };
 
 const Reports = () => {
-  const [users, setUsers] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [data, setData] = useState({
+    total_orders: 0,
+    total_revenue: 0,
+    revenue_timeline: [],
+    payment_distribution: [],
+    status_distribution: [],
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get('/users');
-        const usersData = res.data || [];
-        setUsers(usersData);
-        setOrders(usersData.flatMap(user => user.orders || []));
+        const res = await api.get('/panel/reports/');
+        setData(res.data);
       } catch (error) {
-        console.error('Failed to fetch:', error);
-        setUsers([]);
-        setOrders([]);
+        console.error('Failed to fetch reports:', error);
       } finally {
         setLoading(false);
       }
@@ -51,23 +52,13 @@ const Reports = () => {
     fetchData();
   }, []);
 
-  const totalOrders = orders.length;
-  const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
-
-  const revenueTimeline = orders.map((order, i) => ({
-    name: `Order ${i + 1}`,
-    total: Number(order.total || 0),
-  }));
-
-  const paymentDistribution = ['UPI', 'COD'].map(method => ({
-    name: method,
-    count: orders.filter(order => order.paymentMethod === method).length,
-  }));
-
-  const statusDistribution = ['Processing', 'Shipped', 'Delivered'].map(status => ({
-    name: status,
-    count: orders.filter(order => order.status === status).length,
-  }));
+  const {
+    total_orders,
+    total_revenue,
+    revenue_timeline,
+    payment_distribution,
+    status_distribution,
+  } = data;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-900 text-white">
@@ -79,15 +70,15 @@ const Reports = () => {
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <StatCard title="Total Orders" value={totalOrders} color="bg-blue-600" />
-              <StatCard title="Revenue" value={`₹${totalRevenue.toFixed(2)}`} color="bg-green-600" />
+              <StatCard title="Total Orders" value={total_orders} color="bg-blue-600" />
+              <StatCard title="Revenue" value={`₹${Number(total_revenue).toFixed(2)}`} color="bg-green-600" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="h-[300px]">
                 <h2 className="text-lg font-semibold mb-2">Revenue Timeline</h2>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={revenueTimeline}>
+                  <LineChart data={revenue_timeline}>
                     <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridColor} />
                     <XAxis dataKey="name" stroke={chartTheme.textColor} />
                     <YAxis stroke={chartTheme.textColor} />
@@ -108,7 +99,7 @@ const Reports = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={paymentDistribution}
+                      data={payment_distribution}
                       dataKey="count"
                       nameKey="name"
                       cx="50%"
@@ -116,7 +107,7 @@ const Reports = () => {
                       outerRadius={100}
                       label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                     >
-                      {paymentDistribution.map((_, i) => (
+                      {payment_distribution.map((_, i) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Pie>
@@ -129,13 +120,13 @@ const Reports = () => {
               <div className="h-[300px] lg:col-span-2">
                 <h2 className="text-lg font-semibold mb-2">Order Status Distribution</h2>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={statusDistribution}>
+                  <BarChart data={status_distribution}>
                     <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridColor} />
                     <XAxis dataKey="name" stroke={chartTheme.textColor} />
                     <YAxis stroke={chartTheme.textColor} />
                     <Tooltip {...chartTheme.tooltip} />
                     <Bar dataKey="count">
-                      {statusDistribution.map((_, i) => (
+                      {status_distribution.map((_, i) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Bar>

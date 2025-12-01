@@ -1,8 +1,10 @@
-import { useCart } from "../context/CartContext";
+import useCartStore from "../store/useCartStore";
 import { Link } from "react-router-dom";
 
 const Wishlist = () => {
-  const { wishlist, removeFromWishlist, addToCart } = useCart();
+  const wishlist = useCartStore((state) => state.wishlist);
+  const removeFromWishlist = useCartStore((state) => state.removeFromWishlist);
+  const addToCart = useCartStore((state) => state.addToCart);
 
   const handleAddToCart = async (product) => {
     await removeFromWishlist(product.id);

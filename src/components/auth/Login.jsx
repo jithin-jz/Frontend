@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../store/useAuthStore";
 import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const { login, googleLogin } = useAuth();
+  const { login, googleLogin } = useAuthStore();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -24,8 +25,14 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
+      const user = await login(email, password);
       toast.success("Logged in successfully!");
+      
+      if (user?.is_staff) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.log("Login error:", err.response?.data);
       
@@ -57,8 +64,14 @@ const Login = () => {
   const onGoogleSuccess = async (res) => {
     setGoogleLoading(true);
     try {
-      await googleLogin(res.credential);
+      const user = await googleLogin(res.credential);
       toast.success("Google login successful!");
+      
+      if (user?.is_staff) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.log("Google login error:", err.response?.data);
       

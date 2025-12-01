@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 
 export default function Orders() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -143,6 +143,42 @@ export default function Orders() {
                   </div>
                 </div>
               </div>
+
+              {/* Order Items */}
+              <div className="mt-6 border-t border-slate-700 pt-4">
+                <h4 className="text-sm font-semibold text-gray-200 mb-3">Items</h4>
+                <div className="space-y-4">
+                  {order.items?.map((item) => (
+                    <div key={item.id} className="flex items-center gap-4 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                      <div className="w-16 h-16 bg-slate-700 rounded border border-slate-600 overflow-hidden flex-shrink-0">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.product_name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-xs text-slate-500">
+                            No Img
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-grow min-w-0">
+                        <p className="font-medium text-white truncate">{item.product_name}</p>
+                        <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                          <span className="bg-slate-700 px-1.5 py-0.5 rounded text-slate-300">
+                            {item.category || "General"}
+                          </span>
+                          <span>Qty: {item.quantity}</span>
+                        </div>
+                      </div>
+                      <div className="text-right font-medium text-white whitespace-nowrap">
+                        ₹{Number(item.price).toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </article>
           ))}
         </section>
@@ -150,4 +186,3 @@ export default function Orders() {
     </div>
   );
 }
-

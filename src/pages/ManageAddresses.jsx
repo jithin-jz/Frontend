@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 
 const ManageAddresses = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

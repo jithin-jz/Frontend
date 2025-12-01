@@ -1,5 +1,5 @@
 import ProductCard from "./ProductCard";
-import { useCart } from "../../context/CartContext";
+import useCartStore from "../../store/useCartStore";
 
 const Section = ({
   category,
@@ -8,7 +8,7 @@ const Section = ({
   onAddToCart,
   onToggleWishlist,
 }) => {
-  const { isProductWishlisted } = useCart();
+  const isProductWishlisted = useCartStore((state) => state.isProductWishlisted);
 
   if (!products || products.length === 0) return null;
 

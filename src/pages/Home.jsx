@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
+import useCartStore from "../store/useCartStore";
+import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -67,8 +67,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [currentBanner, setCurrentBanner] = useState(0);
 
-  const { addToWishlist, removeFromWishlist, isProductWishlisted } = useCart();
-  const { user } = useAuth();
+  const addToWishlist = useCartStore((state) => state.addToWishlist);
+  const removeFromWishlist = useCartStore((state) => state.removeFromWishlist);
+  const isProductWishlisted = useCartStore((state) => state.isProductWishlisted);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     bannerImages.forEach((src) => {
@@ -230,4 +232,3 @@ const Home = () => {
 };
 
 export default Home;
-

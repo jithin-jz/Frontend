@@ -9,10 +9,12 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
+    description: '',
     price: '',
     category: 'Men',
     stock: '',
-    image: ''
+    image: null,
+    currentImage: '' // To store the URL of the existing image
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -20,8 +22,12 @@ const EditProduct = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await api.get(`/products/${id}`);
-        setFormData(res.data);
+        const res = await api.get(`/products/${id}/`);
+        setFormData({
+          ...res.data,
+          image: null, // Reset image file input
+          currentImage: res.data.image // Store current image URL
+        });
       } catch {
         toast.error('Failed to load product');
       } finally {
@@ -33,26 +39,47 @@ const EditProduct = () => {
   }, [id]);
 
   const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    const { name, value, files } = e.target;
+    if (name === 'image') {
+      setFormData(prev => ({
+        ...prev,
+        image: files[0]
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, price, category, stock, image } = formData;
-    if (!name || !price || !category || !stock || !image) {
-      toast.error('Please fill out all fields');
+    const { name, description, price, category, stock, image } = formData;
+    
+    // Validation: Image is optional during edit
+    if (!name || !description || !price || !category || !stock) {
+      toast.error('Please fill out all required fields');
       return;
     }
 
     setSubmitting(true);
+    
+    const data = new FormData();
+    data.append('name', name);
+    data.append('description', description);
+    data.append('price', price);
+    data.append('category', category.toLowerCase());
+    data.append('stock', stock);
+    if (image) {
+      data.append('image', image);
+    }
+
     try {
-      await api.patch(`/products/${id}`, {
-        ...formData,
-        price: parseFloat(price),
-        stock: parseInt(stock)
+      await api.patch(`/products/${id}/`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       toast.success('Product updated');
       navigate('/admin/products');
@@ -81,6 +108,17 @@ const EditProduct = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
+                  className="w-full p-2 rounded bg-slate-800 text-white outline-none border border-slate-700"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Description</label>
+                <textarea
+                  name="description"
+                  value={formData.description || ''}
+                  onChange={handleChange}
+                  rows="3"
                   className="w-full p-2 rounded bg-slate-800 text-white outline-none border border-slate-700"
                 />
               </div>
@@ -121,13 +159,19 @@ const EditProduct = () => {
               </div>
 
               <div>
-                <label className="block mb-1">Image URL</label>
+                <label className="block mb-1">Product Image</label>
+                {formData.currentImage && (
+                  <div className="mb-2">
+                    <img src={formData.currentImage} alt="Current" className="h-20 w-20 object-cover rounded" />
+                    <p className="text-xs text-slate-400 mt-1">Current Image</p>
+                  </div>
+                )}
                 <input
-                  type="text"
+                  type="file"
                   name="image"
-                  value={formData.image}
+                  accept="image/*"
                   onChange={handleChange}
-                  className="w-full p-2 rounded bg-slate-800 text-white outline-none border border-slate-700"
+                  className="w-full p-2 rounded bg-slate-800 text-white outline-none border border-slate-700 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500"
                 />
               </div>
 
@@ -155,4 +199,3 @@ const EditProduct = () => {
 };
 
 export default EditProduct;
-

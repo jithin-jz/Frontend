@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { toast } from "react-toastify";
-import { useCart } from "../context/CartContext";
+import useCartStore from "../store/useCartStore";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { reloadCart } = useCart(); // Use reloadCart instead of clearCart
+  const reloadCart = useCartStore((state) => state.loadCart);
 
   const [statusMessage, setStatusMessage] = useState("Verifying payment...");
   const [loading, setLoading] = useState(true);
@@ -98,4 +98,3 @@ const PaymentSuccess = () => {
 };
 
 export default PaymentSuccess;
-

@@ -1,13 +1,14 @@
 import { useEffect } from "react";
-import { useCart } from "../context/CartContext";
+import { Link } from "react-router-dom";
+import useCartStore from "../store/useCartStore";
 
 const OrderSuccess = () => {
-  const { reloadCart } = useCart();
+  const reloadCart = useCartStore((state) => state.loadCart);
 
   // Reload cart when this page loads (backend already cleared it)
   useEffect(() => {
     reloadCart();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [reloadCart]);
 
   return (
     <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center px-4">
@@ -75,4 +76,3 @@ const OrderSuccess = () => {
 };
 
 export default OrderSuccess;
-

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import { useAuth } from "../context/AuthContext";
+import useAuthStore from "../store/useAuthStore";
 
 const AdminNavbar = () => {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout } = useAuthStore();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -25,7 +26,8 @@ const AdminNavbar = () => {
 
   const handleLogout = async () => {
     setMenuOpen(false);
-    await logout(); // logout already handles navigation
+    await logout();
+    navigate("/login");
   };
 
   return (

@@ -11,45 +11,53 @@ const Dashboard = () => {
   const location = useLocation();
   const isRootDashboard = location.pathname === '/admin' || location.pathname === '/admin/dashboard';
 
-  const [users, setUsers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [stats, setStats] = useState({
+    total_users: 0,
+    total_products: 0,
+    total_orders: 0,
+    total_revenue: 0,
+    recent_orders: [],
+    category_data: [],
+    low_stock_products: [],
+  });
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
-    const usersRes = await api.get('/users');
-    const productsRes = await api.get('/products');
-    setUsers(usersRes.data || []);
-    setProducts(productsRes.data || []);
-    const allOrders = usersRes.data.flatMap(u => u.orders || []);
-    setOrders(allOrders);
+    try {
+      const res = await api.get('/panel/dashboard/');
+      setStats(res.data);
+    } catch (err) {
+      console.error("Failed to load dashboard data", err);
+    }
   };
 
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-
-  const categoryData = ['Men', 'Women'].map(cat => ({
-    name: cat,
-    count: products.filter(p => p.category === cat).length,
-  }));
+  const {
+    total_users,
+    total_products,
+    total_orders,
+    total_revenue,
+    recent_orders,
+    category_data,
+    low_stock_products,
+  } = stats;
 
   const COLORS = ['#f87171', '#60a5fa'];
   const BAR_COLORS = ['#f87171', '#fb923c', '#34d399', '#a78bfa', '#facc15'];
 
-  const topProducts = [...products]
-    .sort((a, b) => b.stock - a.stock)
-    .slice(0, 5)
-    .map((p, i) => ({
-      name: p.name,
-      stock: p.stock,
-      fill: BAR_COLORS[i % BAR_COLORS.length]
-    }));
+  // Prepare data for charts
+  const barData = low_stock_products.map((p, i) => ({
+    name: p.name,
+    stock: p.stock,
+    fill: BAR_COLORS[i % BAR_COLORS.length]
+  }));
 
-  const orderTimeline = orders.map((o, i) => ({
-    name: `Order ${i + 1}`,
-    total: o.total,
+  // Reverse recent orders for timeline (oldest to newest among the recent ones)
+  const lineData = [...recent_orders].reverse().map((o) => ({
+    name: new Date(o.created_at).toLocaleDateString(),
+    total: o.total_amount,
   }));
 
   const chartTheme = {
@@ -77,10 +85,10 @@ const Dashboard = () => {
           <>
             {/* Stat Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <StatCard title="Users" value={users.length} color="bg-blue-600" />
-              <StatCard title="Products" value={products.length} color="bg-green-600" />
-              <StatCard title="Orders" value={orders.length} color="bg-orange-600" />
-              <StatCard title="Revenue" value={`₹${totalRevenue}`} color="bg-purple-600" />
+              <StatCard title="Users" value={total_users} color="bg-blue-600" />
+              <StatCard title="Products" value={total_products} color="bg-green-600" />
+              <StatCard title="Orders" value={total_orders} color="bg-orange-600" />
+              <StatCard title="Revenue" value={`₹${total_revenue}`} color="bg-purple-600" />
             </div>
 
             {/* Charts Section */}
@@ -92,7 +100,7 @@ const Dashboard = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={categoryData}
+                        data={category_data}
                         dataKey="count"
                         nameKey="name"
                         cx="50%"
@@ -100,7 +108,7 @@ const Dashboard = () => {
                         outerRadius={100}
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       >
-                        {categoryData.map((_, i) => (
+                        {category_data.map((_, i) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
                         ))}
                       </Pie>
@@ -113,16 +121,16 @@ const Dashboard = () => {
 
               {/* Bar Chart */}
               <div className="bg-slate-800 rounded-xl p-4 shadow-md">
-                <h2 className="text-lg font-semibold mb-4">Top Products by Stock</h2>
+                <h2 className="text-lg font-semibold mb-4">Low Stock Products</h2>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={topProducts}>
+                    <BarChart data={barData}>
                       <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridColor} />
                       <XAxis dataKey="name" stroke={chartTheme.textColor} />
                       <YAxis stroke={chartTheme.textColor} />
                       <Tooltip {...chartTheme.tooltip} />
                       <Bar dataKey="stock">
-                        {topProducts.map((entry, index) => (
+                        {barData.map((entry, index) => (
                           <Cell key={`bar-${index}`} fill={entry.fill} />
                         ))}
                       </Bar>
@@ -133,10 +141,10 @@ const Dashboard = () => {
 
               {/* Line Chart */}
               <div className="bg-slate-800 rounded-xl p-4 shadow-md lg:col-span-2">
-                <h2 className="text-lg font-semibold mb-4">Order Revenue Timeline</h2>
+                <h2 className="text-lg font-semibold mb-4">Recent Orders Revenue</h2>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={orderTimeline}>
+                    <LineChart data={lineData}>
                       <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridColor} />
                       <XAxis dataKey="name" stroke={chartTheme.textColor} />
                       <YAxis stroke={chartTheme.textColor} />
