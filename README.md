@@ -10,12 +10,7 @@ _Modern e-commerce experience built with React & Vite_
 [![Vite](https://img.shields.io/badge/Vite-7.0.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-4.1.11-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-<br/>
-
 </div>
-
-
-<br/>
 
 ## Screenshots
 
