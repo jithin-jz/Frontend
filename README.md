@@ -34,6 +34,21 @@ _Modern e-commerce experience built with React & Vite_
 
 <br/>
 
+<br/>
+
+## Screenshots
+
+<div align="center">
+
+|                                                |                                                             |
+| :--------------------------------------------: | :---------------------------------------------------------: |
+| ![Home](./screenshots/home.png) <br/> **Home** | ![Products](./screenshots/products.png) <br/> **Products**  |
+| ![Cart](./screenshots/cart.png) <br/> **Cart** | ![Admin](./screenshots/admin-dashboard.png) <br/> **Admin** |
+
+</div>
+
+<br/>
+
 ## Features
 
 <table>
@@ -73,19 +88,6 @@ User management · Product CRUD · Order management · Analytics & reports
 
 </td></tr>
 </table>
-
-<br/>
-
-## Screenshots
-
-<div align="center">
-
-|                                                |                                                             |
-| :--------------------------------------------: | :---------------------------------------------------------: |
-| ![Home](./screenshots/home.png) <br/> **Home** | ![Products](./screenshots/products.png) <br/> **Products**  |
-| ![Cart](./screenshots/cart.png) <br/> **Cart** | ![Admin](./screenshots/admin-dashboard.png) <br/> **Admin** |
-
-</div>
 
 <br/>
 
