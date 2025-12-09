@@ -144,7 +144,7 @@ npm run dev
 <a href="./API_DOCS.md">
 <img src="https://img.shields.io/badge/📖_API_Docs-4A90E2?style=for-the-badge&labelColor=2C3E50" alt="API Docs"/>
 </a>
-<br/><sub>Complete endpoint reference</sub>
+<br/><sub>API endpoint reference</sub>
 </td>
 <td align="center" width="25%">
 <a href="./TESTING.md">
