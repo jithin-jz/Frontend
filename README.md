@@ -12,7 +12,23 @@ _Modern e-commerce experience built with React & Vite_
 
 <br/>
 
-[Features](#features) · [Screenshots](#screenshots) · [Quick Start](#quick-start) · [Tech Stack](#tech-stack) · [Documentation](#documentation)
+<p align="center">
+  <a href="#features">
+    <img src="https://img.shields.io/badge/✨_Features-4A90E2?style=for-the-badge&labelColor=2C3E50" alt="Features"/>
+  </a>
+  <a href="#screenshots">
+    <img src="https://img.shields.io/badge/📸_Screenshots-9B59B6?style=for-the-badge&labelColor=2C3E50" alt="Screenshots"/>
+  </a>
+  <a href="#quick-start">
+    <img src="https://img.shields.io/badge/🚀_Quick_Start-27AE60?style=for-the-badge&labelColor=2C3E50" alt="Quick Start"/>
+  </a>
+  <a href="#tech-stack">
+    <img src="https://img.shields.io/badge/🛠️_Tech_Stack-E67E22?style=for-the-badge&labelColor=2C3E50" alt="Tech Stack"/>
+  </a>
+  <a href="#documentation">
+    <img src="https://img.shields.io/badge/📚_Documentation-E74C3C?style=for-the-badge&labelColor=2C3E50" alt="Documentation"/>
+  </a>
+</p>
 
 </div>
 
@@ -20,11 +36,38 @@ _Modern e-commerce experience built with React & Vite_
 
 ## Features
 
-**🎨 Modern UI/UX** — Smooth animations, responsive design, dark theme  
-**🛍️ Shopping** — Product catalog, cart, wishlist, filters  
-**🔐 Authentication** — Email/password, Google OAuth, protected routes  
-**💳 Checkout** — Multi-step flow, COD & Stripe payments  
-**👨‍💼 Admin** — User management, product CRUD, analytics dashboard
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="33%">
+<img src="https://img.shields.io/badge/🎨_Modern_UI/UX-4A90E2?style=for-the-badge&labelColor=2C3E50" alt="UI/UX"/>
+<br/><sub>Smooth animations, responsive design, dark theme</sub>
+</td>
+<td align="center" width="33%">
+<img src="https://img.shields.io/badge/🛍️_Shopping-9B59B6?style=for-the-badge&labelColor=2C3E50" alt="Shopping"/>
+<br/><sub>Product catalog, cart, wishlist, filters</sub>
+</td>
+<td align="center" width="33%">
+<img src="https://img.shields.io/badge/🔐_Authentication-27AE60?style=for-the-badge&labelColor=2C3E50" alt="Auth"/>
+<br/><sub>Email/password, Google OAuth, protected routes</sub>
+</td>
+</tr>
+<tr>
+<td align="center" width="33%">
+<img src="https://img.shields.io/badge/💳_Checkout-E67E22?style=for-the-badge&labelColor=2C3E50" alt="Checkout"/>
+<br/><sub>Multi-step flow, COD & Stripe payments</sub>
+</td>
+<td align="center" width="33%">
+<img src="https://img.shields.io/badge/👨‍💼_Admin-E74C3C?style=for-the-badge&labelColor=2C3E50" alt="Admin"/>
+<br/><sub>User management, product CRUD, analytics</sub>
+</td>
+<td align="center" width="33%">
+</td>
+</tr>
+</table>
+
+</div>
 
 <br/>
 
@@ -88,10 +131,38 @@ npm run dev
 
 ## Documentation
 
-📖 [API Documentation](./API_DOCS.md) — Complete endpoint reference  
-🧪 [Testing Guide](./TESTING.md) — Setup and guidelines  
-⚙️ [Environment Setup](./.env.example) — Configuration  
-🚀 [Deployment](./DEPLOYMENT.md) — Deploy instructions
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="25%">
+<a href="./API_DOCS.md">
+<img src="https://img.shields.io/badge/📖_API_Docs-4A90E2?style=for-the-badge&labelColor=2C3E50" alt="API Docs"/>
+</a>
+<br/><sub>Complete endpoint reference</sub>
+</td>
+<td align="center" width="25%">
+<a href="./TESTING.md">
+<img src="https://img.shields.io/badge/🧪_Testing-27AE60?style=for-the-badge&labelColor=2C3E50" alt="Testing"/>
+</a>
+<br/><sub>Setup and guidelines</sub>
+</td>
+<td align="center" width="25%">
+<a href="./.env.example">
+<img src="https://img.shields.io/badge/⚙️_Environment-E67E22?style=for-the-badge&labelColor=2C3E50" alt="Environment"/>
+</a>
+<br/><sub>Configuration guide</sub>
+</td>
+<td align="center" width="25%">
+<a href="./DEPLOYMENT.md">
+<img src="https://img.shields.io/badge/🚀_Deployment-E74C3C?style=for-the-badge&labelColor=2C3E50" alt="Deployment"/>
+</a>
+<br/><sub>Deploy instructions</sub>
+</td>
+</tr>
+</table>
+
+</div>
 
 <br/>
 
@@ -102,7 +173,11 @@ npm run build    # Production build
 npm run preview  # Preview build
 ```
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
+<div align="center">
+
+[![Deployment Guide](https://img.shields.io/badge/📖_Full_Deployment_Guide-E74C3C?style=for-the-badge&labelColor=2C3E50)](./DEPLOYMENT.md)
+
+</div>
 
 <br/>
 
