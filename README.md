@@ -36,38 +36,43 @@ _Modern e-commerce experience built with React & Vite_
 
 ## Features
 
-<div align="center">
-
 <table>
-<tr>
-<td align="center" width="33%">
-<img src="https://img.shields.io/badge/🎨_Modern_UI/UX-4A90E2?style=for-the-badge&labelColor=2C3E50" alt="UI/UX"/>
-<br/><sub>Smooth animations, responsive design, dark theme</sub>
-</td>
-<td align="center" width="33%">
-<img src="https://img.shields.io/badge/🛍️_Shopping-9B59B6?style=for-the-badge&labelColor=2C3E50" alt="Shopping"/>
-<br/><sub>Product catalog, cart, wishlist, filters</sub>
-</td>
-<td align="center" width="33%">
-<img src="https://img.shields.io/badge/🔐_Authentication-27AE60?style=for-the-badge&labelColor=2C3E50" alt="Auth"/>
-<br/><sub>Email/password, Google OAuth, protected routes</sub>
-</td>
-</tr>
-<tr>
-<td align="center" width="33%">
-<img src="https://img.shields.io/badge/💳_Checkout-E67E22?style=for-the-badge&labelColor=2C3E50" alt="Checkout"/>
-<br/><sub>Multi-step flow, COD & Stripe payments</sub>
-</td>
-<td align="center" width="33%">
-<img src="https://img.shields.io/badge/👨‍💼_Admin-E74C3C?style=for-the-badge&labelColor=2C3E50" alt="Admin"/>
-<br/><sub>User management, product CRUD, analytics</sub>
-</td>
-<td align="center" width="33%">
-</td>
-</tr>
-</table>
+<tr><td>
 
-</div>
+### 🎨 Modern UI/UX
+
+Smooth animations with Framer Motion · Fully responsive design · Elegant dark theme · Delightful micro-interactions
+
+</td></tr>
+<tr><td>
+
+### 🛍️ Shopping Experience
+
+Advanced product filters · Persistent shopping cart · Wishlist functionality · Real-time stock updates
+
+</td></tr>
+<tr><td>
+
+### 🔐 Authentication
+
+Email/Password & Google OAuth · Protected routes · Auto token refresh · Secure session management
+
+</td></tr>
+<tr><td>
+
+### 💳 Checkout & Orders
+
+Multi-step checkout flow · COD & Stripe payments · Order tracking · Payment verification
+
+</td></tr>
+<tr><td>
+
+### 👨‍💼 Admin Dashboard
+
+User management · Product CRUD · Order management · Analytics & reports
+
+</td></tr>
+</table>
 
 <br/>
 
