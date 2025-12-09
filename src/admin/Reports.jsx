@@ -146,6 +146,7 @@ const Reports = () => {
   );
 };
 
+
 const StatCard = ({ title, value, color }) => (
   <div className={`rounded-xl text-white p-5 ${color} transition-transform hover:scale-105`}>
     <p className="text-sm uppercase font-semibold opacity-80">{title}</p>
