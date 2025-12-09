@@ -1,461 +1,307 @@
 <div align="center">
 
-# 🎨 Souled Store - Frontend
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=2800&pause=2000&color=3B82F6&center=true&vCenter=true&width=940&lines=🎨+Souled+Store+-+Modern+E-Commerce" alt="Typing SVG" />
 
-### Modern E-Commerce Experience Built with React & Vite
+### ✨ Lightning-fast shopping experience built with React & Vite
+
+<p align="center">
+  <a href="#-features"><kbd>Features</kbd></a>
+  <a href="#-screenshots"><kbd>Screenshots</kbd></a>
+  <a href="#-quick-start"><kbd>Quick Start</kbd></a>
+  <a href="#-tech-stack"><kbd>Tech Stack</kbd></a>
+  <a href="#-documentation"><kbd>Docs</kbd></a>
+</p>
 
 [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.0.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-4.1.11-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-
-**Lightning-fast** shopping experience with smooth animations, responsive design, and modern UI/UX patterns.
-
-[Features](#-features) • [Screenshots](#-screenshots) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Tech Stack](#-tech-stack)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 </div>
 
----
+<br/>
 
 ## ✨ Features
 
+<table>
+<tr>
+<td width="50%">
+
 ### 🎨 Modern UI/UX
 
-- **Smooth Animations** - Powered by Framer Motion for delightful interactions
-- **Responsive Design** - Mobile-first approach, works on all devices
-- **Dark Theme** - Elegant dark slate color scheme
-- **Micro-interactions** - Hover effects, transitions, and visual feedback
-- **Empty States** - Beautiful placeholders for cart, wishlist, and orders
+- ✅ Smooth animations with Framer Motion
+- ✅ Fully responsive design
+- ✅ Elegant dark theme
+- ✅ Delightful micro-interactions
+- ✅ Beautiful empty states
 
 ### 🛍️ Shopping Experience
 
-- **Product Catalog** - Browse with filters (category, price range, search)
-- **Shopping Cart** - Persistent cart with real-time updates
-- **Wishlist** - Save favorites for later
-- **Quick Actions** - Add to cart/wishlist with one click
-- **Stock Indicators** - Real-time availability display
+- ✅ Advanced product filters
+- ✅ Persistent shopping cart
+- ✅ Wishlist functionality
+- ✅ One-click actions
+- ✅ Real-time stock updates
+
+</td>
+<td width="50%">
 
 ### 🔐 Authentication
 
-- **Email/Password Login** - Traditional authentication
-- **Google OAuth** - One-tap sign-in with Google
-- **Protected Routes** - Automatic redirect for authenticated pages
-- **Session Management** - Automatic token refresh
+- ✅ Email/Password login
+- ✅ Google OAuth integration
+- ✅ Protected routes
+- ✅ Auto token refresh
 
 ### 💳 Checkout & Orders
 
-- **Multi-Step Checkout** - Address selection, payment method
-- **Payment Options** - Cash on Delivery & Stripe integration
-- **Order Tracking** - View order history with detailed status
-- **Payment Status** - Real-time payment verification
-- **Success Animations** - Confetti celebration on order completion
+- ✅ Multi-step checkout
+- ✅ COD & Stripe payments
+- ✅ Order tracking
+- ✅ Payment verification
+- ✅ Success animations
+
+</td>
+</tr>
+</table>
 
 ### 👨‍💼 Admin Dashboard
 
-- **User Management** - View, block/unblock users
-- **Product Management** - Full CRUD operations
-- **Order Management** - Update order and payment status
-- **Analytics Dashboard** - Sales metrics and charts
-- **Responsive Admin UI** - Works on all devices
+> Full-featured admin panel with user management, product CRUD, order management, and analytics
 
----
+<br/>
 
 ## 📸 Screenshots
 
-### Home Page
+<div align="center">
 
-![Home Page](./screenshots/home.png)
+### 🏠 Home Page
 
-### Products Listing
+<img src="./screenshots/home.png" alt="Home Page" width="800"/>
 
-![Products Page](./screenshots/products.png)
+### 🛒 Products & Cart
 
-### Shopping Cart
+<table>
+<tr>
+<td width="50%">
+<img src="./screenshots/products.png" alt="Products" width="100%"/>
+<p align="center"><b>Product Listing</b></p>
+</td>
+<td width="50%">
+<img src="./screenshots/cart.png" alt="Cart" width="100%"/>
+<p align="center"><b>Shopping Cart</b></p>
+</td>
+</tr>
+</table>
 
-![Cart Page](./screenshots/cart.png)
+### 📊 Admin Dashboard
 
-### Admin Dashboard
+<img src="./screenshots/admin-dashboard.png" alt="Admin Dashboard" width="800"/>
 
-![Admin Dashboard](./screenshots/admin-dashboard.png)
+</div>
 
----
+<br/>
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 📋 Prerequisites
 
 ```bash
 Node.js 18+ (LTS recommended)
 npm or yarn
-Backend API running on localhost:8000
+Backend API running
 ```
 
-### Installation
+### ⚡ Installation
 
-1. **Clone and Setup**
+```bash
+# 1️⃣ Clone the repository
+git clone <your-repo-url>
+cd Souled
 
-   ```bash
-   git clone <your-repo-url>
-   cd Souled
-   npm install
-   ```
+# 2️⃣ Install dependencies
+npm install
 
-2. **Environment Configuration**
+# 3️⃣ Setup environment variables
+cp .env.example .env
+# Edit .env with your configuration
 
-   Copy `.env.example` to `.env` and update with your values:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Then edit `.env` with your configuration:
-
-   ```env
-   VITE_API_URL=http://localhost:8000/api
-   VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
-   ```
-
-   See [.env.example](./.env.example) for detailed setup instructions.
-
-3. **Start Development Server**
-
-   ```bash
-   npm run dev
-   ```
-
-   🎉 App running at `http://localhost:5173`
-
----
-
-## 📁 Project Structure
-
-```
-Souled/
-├── src/
-│   ├── admin/              # Admin dashboard pages
-│   │   ├── Dashboard.jsx   # Analytics & stats
-│   │   ├── Users.jsx       # User management
-│   │   ├── Products.jsx    # Product management
-│   │   └── AdminOrderManagement.jsx
-│   │
-│   ├── components/         # Reusable components
-│   │   ├── auth/          # Login, Register
-│   │   ├── Navbar.jsx     # Navigation bar
-│   │   ├── Footer.jsx     # Site footer
-│   │   └── Loader.jsx     # Loading states
-│   │
-│   ├── pages/             # Customer pages
-│   │   ├── Home.jsx       # Landing page
-│   │   ├── Products/      # Product listing
-│   │   ├── Cart.jsx       # Shopping cart
-│   │   ├── Wishlist.jsx   # Saved items
-│   │   ├── Orders.jsx     # Order history
-│   │   ├── Payment.jsx    # Checkout
-│   │   └── ProfileDetails.jsx
-│   │
-│   ├── Routes/            # Route guards
-│   │   ├── ProtectedRoute.jsx
-│   │   ├── PublicRoute.jsx
-│   │   └── AdminRoute.jsx
-│   │
-│   ├── store/             # Zustand state management
-│   │   ├── useAuthStore.js
-│   │   └── useCartStore.js
-│   │
-│   ├── utils/             # Utilities
-│   │   └── api.js         # Axios instance with interceptors
-│   │
-│   └── App.jsx            # Root component
-│
-├── public/                # Static assets
-├── index.html            # HTML template
-└── package.json          # Dependencies
+# 4️⃣ Start development server
+npm run dev
 ```
 
----
+> 🎉 **App running at** `http://localhost:5173`
 
-## 🎯 Key Pages
+### 🔧 Environment Variables
 
-### Customer Pages
+```env
+VITE_API_URL=http://localhost:8000/api
+VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+```
 
-- **Home** (`/`) - Landing page with featured products
-- **Products** (`/products`) - Catalog with filters and search
-- **Product Details** (`/products/:id`) - Individual product page
-- **Cart** (`/cart`) - Shopping cart management
-- **Wishlist** (`/wishlist`) - Saved items
-- **Checkout** (`/payment`) - Address and payment selection
-- **Orders** (`/orders`) - Order history
-- **Profile** (`/profile`) - User profile and settings
-- **Addresses** (`/addresses`) - Manage shipping addresses
+📖 See [.env.example](./.env.example) for detailed setup instructions
 
-### Admin Pages
-
-- **Dashboard** (`/admin/dashboard`) - Analytics and metrics
-- **Users** (`/admin/users`) - User management
-- **Products** (`/admin/products`) - Product CRUD
-- **Orders** (`/admin/orders`) - Order management
-- **Reports** (`/admin/reports`) - Sales reports
-
----
+<br/>
 
 ## 🛠️ Tech Stack
 
-### Core
+<div align="center">
 
-- **React 18.2.0** - UI library
-- **Vite 7.0.4** - Build tool & dev server
-- **React Router 7.7.0** - Client-side routing
-- **Zustand 5.0.9** - State management
+### Core Technologies
 
-### Styling
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-433E38?style=for-the-badge&logo=react&logoColor=white)
 
-- **Tailwind CSS 4.1.11** - Utility-first CSS
-- **Framer Motion 12.23.12** - Animation library
-- **Lucide React** - Icon library
-- **React Icons** - Additional icons
+### Styling & UI
 
-### Features
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
 
-- **Axios 1.10.0** - HTTP client with interceptors
-- **React Toastify** - Toast notifications
-- **React Confetti** - Success celebrations
-- **Recharts 3.1.0** - Charts for admin dashboard
-- **@react-oauth/google** - Google OAuth integration
+### Features & Tools
 
-### Development
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
+![Google OAuth](https://img.shields.io/badge/Google_OAuth-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-008CDD?style=for-the-badge&logo=stripe&logoColor=white)
 
-- **ESLint** - Code linting
-- **PostCSS** - CSS processing
-- **Autoprefixer** - CSS vendor prefixes
+</div>
 
----
+<details>
+<summary><b>📦 View All Dependencies</b></summary>
 
-## 🎨 Design System
+#### Core
 
-### Color Palette
+- React 18.2.0 - UI library
+- Vite 7.0.4 - Build tool & dev server
+- React Router 7.7.0 - Client-side routing
+- Zustand 5.0.9 - State management
 
-```css
-/* Primary Colors */
---slate-900: #0f172a   /* Background */
---slate-800: #1e293b   /* Cards */
---slate-700: #334155   /* Borders */
+#### Styling
 
-/* Accent Colors */
---blue-500: #3b82f6    /* Primary actions */
---green-500: #10b981   /* Success states */
---red-500: #ef4444     /* Errors */
---yellow-500: #eab308  /* Warnings */
-```
+- Tailwind CSS 4.1.11 - Utility-first CSS
+- Framer Motion 12.23.12 - Animation library
+- Lucide React - Icon library
+- React Icons - Additional icons
 
-### Typography
+#### Features
 
-- **Font Family**: System fonts (optimized for performance)
-- **Headings**: Bold, large sizes
-- **Body**: Regular weight, readable sizes
+- Axios 1.10.0 - HTTP client
+- React Toastify - Toast notifications
+- React Confetti - Success celebrations
+- Recharts 3.1.0 - Charts
+- @react-oauth/google - Google OAuth
 
----
+</details>
+
+<br/>
 
 ## 📚 Documentation
 
-- **[API Documentation](./API_DOCS.md)** - Complete API endpoint reference
-- **[Testing Guide](./TESTING.md)** - Testing setup and guidelines
-- **[Environment Setup](./.env.example)** - Environment variables configuration
-- **[Deployment Guide](./DEPLOYMENT.md)** - Deployment instructions
+<table>
+<tr>
+<td align="center" width="25%">
+<a href="./API_DOCS.md">
+<img src="https://img.icons8.com/fluency/96/api.png" width="64"/>
+<br/><b>API Docs</b>
+</a>
+<br/>Complete endpoint reference
+</td>
+<td align="center" width="25%">
+<a href="./TESTING.md">
+<img src="https://img.icons8.com/fluency/96/test-tube.png" width="64"/>
+<br/><b>Testing Guide</b>
+</a>
+<br/>Setup & guidelines
+</td>
+<td align="center" width="25%">
+<a href="./.env.example">
+<img src="https://img.icons8.com/fluency/96/settings.png" width="64"/>
+<br/><b>Environment</b>
+</a>
+<br/>Configuration guide
+</td>
+<td align="center" width="25%">
+<a href="./DEPLOYMENT.md">
+<img src="https://img.icons8.com/fluency/96/rocket.png" width="64"/>
+<br/><b>Deployment</b>
+</a>
+<br/>Deploy instructions
+</td>
+</tr>
+</table>
 
----
+<br/>
 
 ## 🧪 Testing
 
 ```bash
-# Run tests (when configured)
+# Run tests
 npm test
+
+# Run with coverage
+npm run test:coverage
 
 # Run linter
 npm run lint
-
-# Type checking (if using TypeScript)
-npm run type-check
 ```
 
----
+📖 **Full testing guide:** [TESTING.md](./TESTING.md)
 
-## � Build & Deployment
+<br/>
 
-### Production Build
+## 📦 Build & Deployment
 
 ```bash
+# Production build
 npm run build
-```
 
-Output in `dist/` directory.
-
-### Preview Production Build
-
-```bash
+# Preview production build
 npm run preview
 ```
 
-### Deployment Options
+🚀 **Deployment guide:** [DEPLOYMENT.md](./DEPLOYMENT.md)
 
-#### Vercel (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
-
-#### Netlify
-
-```bash
-# Build command
-npm run build
-
-# Publish directory
-dist
-```
-
-#### Docker
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-EXPOSE 5173
-CMD ["npm", "run", "preview"]
-```
-
----
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-| Variable                | Description            | Required |
-| ----------------------- | ---------------------- | -------- |
-| `VITE_API_URL`          | Backend API base URL   | ✅       |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID | ✅       |
-
-### Vite Config
-
-```javascript
-// vite.config.js
-export default {
-  server: {
-    port: 5173,
-    proxy: {
-      "/api": "http://localhost:8000",
-    },
-  },
-};
-```
-
----
-
-## 🔒 Security Features
-
-✅ **XSS Protection** - React's built-in escaping  
-✅ **CSRF Tokens** - Automatic CSRF handling  
-✅ **Secure Cookies** - HttpOnly JWT cookies  
-✅ **Route Guards** - Protected routes for auth  
-✅ **Input Validation** - Client-side validation  
-✅ **Auto Logout** - On token expiration
-
----
-
-## 🚀 Performance
-
-- **Code Splitting** - Lazy loading for routes
-- **Tree Shaking** - Unused code elimination
-- **Asset Optimization** - Image and CSS optimization
-- **Fast Refresh** - Instant HMR during development
-- **Lighthouse Score** - 90+ on all metrics
-
----
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### Application won't start
-
-```bash
-# Clear node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
-```
-
-#### API connection errors
-
-- Verify `VITE_API_URL` in `.env` is correct
-- Ensure backend server is running
-- Check CORS settings on backend
-
-#### Google OAuth not working
-
-- Verify `VITE_GOOGLE_CLIENT_ID` is correct
-- Check authorized origins in Google Console
-- Ensure redirect URIs are configured
-
-#### Build errors
-
-```bash
-# Clear Vite cache
-rm -rf node_modules/.vite
-npm run dev
-```
-
-#### Images not loading
-
-- Check backend media URL configuration
-- Verify CORS allows image requests
-- Ensure backend serves static files correctly
-
-### Getting Help
-
-- Check [API Documentation](./API_DOCS.md) for endpoint details
-- Review [Testing Guide](./TESTING.md) for debugging tips
-- Open an issue on GitHub with error details
-
----
+<br/>
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Feel free to open issues and pull requests.
 
----
+<br/>
 
 ## 📄 License
 
 This project is licensed under the MIT License.
 
----
-
-## 🙏 Acknowledgments
-
-- [React](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Zustand](https://github.com/pmndrs/zustand)
+<br/>
 
 ---
 
 <div align="center">
 
-**Built with ❤️ by JITHIN**
+### 💙 Built with passion by **JITHIN**
 
-⭐ Star this repo if you find it helpful!
+<p>
+<a href="https://github.com/jithin-jz/souled-frontend">
+<img src="https://img.shields.io/github/stars/jithin-jz/souled-frontend?style=social" alt="Stars"/>
+</a>
+<a href="https://github.com/jithin-jz/souled-frontend/fork">
+<img src="https://img.shields.io/github/forks/jithin-jz/souled-frontend?style=social" alt="Forks"/>
+</a>
+</p>
 
-[Report Bug](https://github.com/yourusername/souled/issues) • [Request Feature](https://github.com/yourusername/souled/issues)
+**⭐ Star this repo if you find it helpful!**
+
+<p>
+<a href="https://github.com/jithin-jz/souled-frontend/issues">Report Bug</a>
+·
+<a href="https://github.com/jithin-jz/souled-frontend/issues">Request Feature</a>
+</p>
+
+<br/>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer"/>
 
 </div>
