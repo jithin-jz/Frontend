@@ -189,7 +189,7 @@ const Products = () => {
           categories={categories}
         />
 
-        <div className="mt-8">
+        <div className={`mt-8 ${loading ? 'flex flex-col items-center justify-center min-h-[60vh]' : ''}`}>
           {loading ? (
             <Loader />
           ) : allProducts.length === 0 ? (
