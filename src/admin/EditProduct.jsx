@@ -95,11 +95,9 @@ const EditProduct = () => {
     <div className="min-h-screen flex flex-col bg-gray-950 text-white">
       <AdminNavbar />
 
-      <main className="flex-grow flex items-center justify-center px-4 py-8">
+      <main className={`flex-grow flex items-center justify-center px-4 py-8`}>
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader />
-          </div>
+          <Loader />
         ) : (
           <div className="w-full max-w-xl bg-slate-900 border border-slate-800 p-6 rounded-xl">
             <h2 className="text-xl font-semibold text-white mb-6 text-center">Edit Product</h2>

@@ -54,42 +54,42 @@ const AdminProducts = () => {
     <div className="min-h-screen flex flex-col bg-slate-900 text-white">
       <AdminNavbar />
 
-      <main className="flex-grow p-6 max-w-7xl mx-auto w-full">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <h2 className="text-2xl font-bold">Manage Products</h2>
-          
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-pink-500 outline-none"
-            >
-              <option value="">All Categories</option>
-              <option value="men">Men</option>
-              <option value="women">Women</option>
-            </select>
+      <main className={`flex-grow p-6 max-w-7xl mx-auto w-full ${loading ? 'flex flex-col items-center justify-center' : ''}`}>
+        {!loading && (
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+            <h2 className="text-2xl font-bold">Manage Products</h2>
+            
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-pink-500 outline-none"
+              >
+                <option value="">All Categories</option>
+                <option value="men">Men</option>
+                <option value="women">Women</option>
+              </select>
 
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full sm:w-64 p-2 rounded-lg bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-pink-500 outline-none"
-            />
-            <Link
-              to="/admin/products/add"
-              className="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2 rounded-xl whitespace-nowrap"
-            >
-              + Add Product
-            </Link>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto bg-slate-800 border border-slate-700 rounded-xl">
-          {loading ? (
-            <div className="py-20 flex justify-center">
-              <Loader />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full sm:w-64 p-2 rounded-lg bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-pink-500 outline-none"
+              />
+              <Link
+                to="/admin/products/add"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2 rounded-xl whitespace-nowrap"
+              >
+                + Add Product
+              </Link>
             </div>
+          </div>
+        )}
+
+        <div className={`overflow-x-auto bg-slate-800 border border-slate-700 rounded-xl ${loading ? 'bg-transparent border-none' : ''}`}>
+          {loading ? (
+            <Loader />
           ) : (
             <table className="min-w-full text-left text-sm">
               <thead className="bg-slate-700 text-slate-300 text-xs uppercase">

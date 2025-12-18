@@ -70,14 +70,12 @@ const AdminUsers = () => {
     <div className="min-h-screen flex flex-col bg-slate-900 text-white">
       <AdminNavbar />
 
-      <main className="flex-grow p-4 sm:p-6">
-        <h2 className="text-xl font-semibold mb-4">All Users</h2>
+      <main className={`flex-grow p-4 sm:p-6 ${loading ? 'flex flex-col items-center justify-center' : ''}`}>
+        {!loading && <h2 className="text-xl font-semibold mb-4">All Users</h2>}
 
-        <div className="overflow-x-auto rounded-xl bg-slate-800 shadow-inner">
+        <div className={`overflow-x-auto rounded-xl bg-slate-800 shadow-inner ${loading ? 'bg-transparent shadow-none' : ''}`}>
           {loading ? (
-            <div className="py-20 flex justify-center">
-              <Loader />
-            </div>
+            <Loader />
           ) : (
             <table className="w-full min-w-[800px] text-left text-sm">
               <thead>

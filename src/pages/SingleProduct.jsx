@@ -66,7 +66,7 @@ const SingleProduct = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh] bg-slate-900 text-white">
+      <div className="flex justify-center items-center min-h-[80vh] bg-slate-900 text-white">
         <Loader />
       </div>
     );

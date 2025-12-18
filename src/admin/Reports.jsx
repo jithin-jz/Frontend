@@ -65,11 +65,9 @@ const Reports = () => {
     <div className="min-h-screen flex flex-col bg-slate-900 text-white">
       <AdminNavbar />
 
-      <main className="flex-grow p-6 max-w-7xl mx-auto w-full">
+      <main className={`flex-grow p-6 max-w-7xl mx-auto w-full ${loading ? 'flex flex-col items-center justify-center' : ''}`}>
         {loading ? (
-          <div className="flex justify-center mt-20">
-            <Loader />
-          </div>
+          <Loader />
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

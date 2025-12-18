@@ -85,11 +85,9 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-900 text-white">
       <AdminNavbar />
-      <main className="flex-grow p-4 sm:p-6">
+      <main className={`flex-grow p-4 sm:p-6 ${loading ? 'flex flex-col items-center justify-center' : ''}`}>
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader />
-          </div>
+          <Loader />
         ) : isRootDashboard ? (
           <>
             {/* Stat Cards */}

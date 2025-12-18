@@ -49,15 +49,15 @@ const AdminOrderManagement = () => {
     <div className="min-h-screen flex flex-col bg-slate-900 text-white">
       <AdminNavbar />
 
-      <main className="flex-grow px-4 py-10 max-w-7xl mx-auto w-full">
-        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 uppercase tracking-wide">
-          Order Management
-        </h2>
+      <main className={`flex-grow px-4 py-10 max-w-7xl mx-auto w-full ${loading ? 'flex flex-col items-center justify-center' : ''}`}>
+        {!loading && (
+          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 uppercase tracking-wide">
+            Order Management
+          </h2>
+        )}
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader />
-          </div>
+          <Loader />
         ) : orders.length === 0 ? (
           <div className="text-center text-slate-400">No orders found.</div>
         ) : (
