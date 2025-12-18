@@ -17,7 +17,10 @@ const useCartStore = create((set, get) => ({
     if (!silent) set({ loading: true });
     try {
       const res = await api.get("/cart/");
-      set({ cart: res.data.items || [] });
+      const items = res.data.items || [];
+      // Sort items by ID to maintain stable order
+      items.sort((a, b) => a.id - b.id);
+      set({ cart: items });
     } catch (error) {
       console.error("Load cart failed", error);
     } finally {
