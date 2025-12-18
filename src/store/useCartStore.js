@@ -8,20 +8,20 @@ const useCartStore = create((set, get) => ({
   wishlist: [],
   loading: false,
 
-  loadCart: async () => {
+  loadCart: async (silent = false) => {
     if (!useAuthStore.getState().user) {
         set({ cart: [] });
         return;
     }
 
-    set({ loading: true });
+    if (!silent) set({ loading: true });
     try {
       const res = await api.get("/cart/");
       set({ cart: res.data.items || [] });
     } catch (error) {
       console.error("Load cart failed", error);
     } finally {
-      set({ loading: false });
+      if (!silent) set({ loading: false });
     }
   },
 
@@ -56,9 +56,9 @@ const useCartStore = create((set, get) => ({
   removeFromCart: async (itemId) => {
     try {
       await api.delete(`/cart/remove/${itemId}/`);
-      await get().loadCart();
+      await get().loadCart(true);
     } catch (error) {
-        console.error("Remove from cart failed", error);
+      console.error("Remove from cart failed", error);
     }
   },
 
@@ -66,9 +66,9 @@ const useCartStore = create((set, get) => ({
     if (qty < 1) return get().removeFromCart(itemId);
     try {
       await api.patch(`/cart/update/${itemId}/`, { quantity: qty });
-      await get().loadCart();
+      await get().loadCart(true);
     } catch (error) {
-        console.error("Update quantity failed", error);
+      console.error("Update quantity failed", error);
     }
   },
 
@@ -76,7 +76,7 @@ const useCartStore = create((set, get) => ({
     if (!useAuthStore.getState().user) return;
     try {
       await api.delete("/cart/clear/");
-      await get().loadCart();
+      await get().loadCart(true);
       return true;
     } catch (error) {
       return false;

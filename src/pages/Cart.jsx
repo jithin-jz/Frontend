@@ -188,6 +188,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
         {/* QTY */}
         <div className="flex items-center border border-slate-600 rounded-lg overflow-hidden">
           <button
+            type="button"
             onClick={handleDecrease}
             className="px-3 py-1 text-slate-300 hover:bg-slate-700"
           >
@@ -195,6 +196,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
           </button>
           <span className="px-4 text-white">{quantity}</span>
           <button
+            type="button"
             onClick={handleIncrease}
             className="px-3 py-1 text-slate-300 hover:bg-slate-700"
           >
@@ -204,6 +206,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
 
         {/* REMOVE */}
         <button
+          type="button"
           onClick={handleRemove}
           className="text-red-400 hover:text-red-600 text-sm font-medium"
         >
