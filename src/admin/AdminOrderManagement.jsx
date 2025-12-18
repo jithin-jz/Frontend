@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 import AdminNavbar from './AdminNavbar';
+import Loader from '../components/Loader';
 
 const AdminOrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -54,7 +55,9 @@ const AdminOrderManagement = () => {
         </h2>
 
         {loading ? (
-          <div className="text-center text-slate-400 animate-pulse">Loading orders...</div>
+          <div className="flex justify-center py-20">
+            <Loader />
+          </div>
         ) : orders.length === 0 ? (
           <div className="text-center text-slate-400">No orders found.</div>
         ) : (

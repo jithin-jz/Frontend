@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
 import { toast } from "react-toastify";
+import Loader from "../components/Loader";
 
 const ManageAddresses = () => {
   const { user } = useAuthStore();
@@ -96,7 +97,7 @@ const ManageAddresses = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
-        <p>Loading...</p>
+        <Loader />
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import AdminNavbar from './AdminNavbar';
+import Loader from '../components/Loader';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -66,7 +67,9 @@ const Reports = () => {
 
       <main className="flex-grow p-6 max-w-7xl mx-auto w-full">
         {loading ? (
-          <div className="text-center text-slate-400 mt-20">Loading reports...</div>
+          <div className="flex justify-center mt-20">
+            <Loader />
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

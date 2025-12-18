@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 import AdminNavbar from "../admin/AdminNavbar";
+import Loader from "../components/Loader";
 
 const AdminUserDetails = () => {
   const { id } = useParams();
@@ -44,8 +45,8 @@ const AdminUserDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center animate-pulse">
-        <p>Loading user details...</p>
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <Loader />
       </div>
     );
   }

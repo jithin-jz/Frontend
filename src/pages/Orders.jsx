@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
 import { toast } from "react-toastify";
+import Loader from "../components/Loader";
 
 export default function Orders() {
   const { user } = useAuthStore();
@@ -28,10 +29,7 @@ export default function Orders() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-400">
-        <div className="text-center">
-          <div className="animate-pulse mb-4">Loading orders...</div>
-          <div className="text-sm">If this takes too long, try refreshing.</div>
-        </div>
+        <Loader />
       </div>
     );
   }

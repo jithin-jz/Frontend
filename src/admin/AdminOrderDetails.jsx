@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 import AdminNavbar from "./AdminNavbar";
+import Loader from "../components/Loader";
 
 const AdminOrderDetails = () => {
   const { id } = useParams();
@@ -43,8 +44,8 @@ const AdminOrderDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center animate-pulse">
-        <p>Loading order details...</p>
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <Loader />
       </div>
     );
   }

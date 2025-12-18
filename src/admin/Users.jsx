@@ -4,18 +4,23 @@ import api from "../utils/api";
 import { toast } from "react-toastify";
 import AdminNavbar from "./AdminNavbar";
 import { Eye, Ban, CheckCircle, Trash2 } from "lucide-react";
+import Loader from "../components/Loader";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [deleteModal, setDeleteModal] = useState({ show: false, userId: null, userName: "" });
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const res = await api.get("/panel/users/");
       setUsers(res.data);
     } catch (error) {
       toast.error("Failed to fetch users");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,80 +74,86 @@ const AdminUsers = () => {
         <h2 className="text-xl font-semibold mb-4">All Users</h2>
 
         <div className="overflow-x-auto rounded-xl bg-slate-800 shadow-inner">
-          <table className="w-full min-w-[800px] text-left text-sm">
-            <thead>
-              <tr className="bg-slate-700 text-slate-300 uppercase">
-                <th className="p-4 font-semibold">Name</th>
-                <th className="p-4 font-semibold">Email</th>
-                <th className="p-4 font-semibold">Role</th>
-                <th className="p-4 font-semibold">Status</th>
-                <th className="p-4 font-semibold text-center">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {users.map((user) => (
-                <tr
-                  key={user.id}
-                  className="border-t border-slate-700 hover:bg-slate-700/40 transition-colors"
-                >
-                  <td className="p-4">{user.name || "No Name"}</td>
-                  <td className="p-4">{user.email}</td>
-                  <td className="p-4 capitalize">{user.role || "user"}</td>
-                  <td className="p-4">
-                    <span
-                      className={`font-medium ${
-                        user.isBlock ? "text-red-400" : "text-green-400"
-                      }`}
-                    >
-                      {user.isBlock ? "Blocked" : "Active"}
-                    </span>
-                  </td>
-
-                  <td className="p-4 flex justify-center items-center gap-4 flex-wrap">
-                    {/* View */}
-                    <button
-                      onClick={() => navigate(`/admin/users/${user.id}`)}
-                      aria-label="View User"
-                      className="hover:scale-110 transition-transform"
-                    >
-                      <Eye className="w-5 h-5 text-blue-400 hover:text-blue-300" />
-                    </button>
-
-                    {/* Block / Unblock */}
-                    <button
-                      onClick={() => toggleBlock(user.id)}
-                      aria-label={user.isBlock ? "Unblock User" : "Block User"}
-                      className="hover:scale-110 transition-transform"
-                    >
-                      {user.isBlock ? (
-                        <CheckCircle className="w-5 h-5 text-green-400 hover:text-green-300" />
-                      ) : (
-                        <Ban className="w-5 h-5 text-yellow-400 hover:text-yellow-300" />
-                      )}
-                    </button>
-
-                    {/* Delete */}
-                    <button
-                      onClick={() => openDeleteModal(user.id, user.name || user.email)}
-                      aria-label="Delete User"
-                      className="hover:scale-110 transition-transform"
-                    >
-                      <Trash2 className="w-5 h-5 text-red-400 hover:text-red-300" />
-                    </button>
-                  </td>
+          {loading ? (
+            <div className="py-20 flex justify-center">
+              <Loader />
+            </div>
+          ) : (
+            <table className="w-full min-w-[800px] text-left text-sm">
+              <thead>
+                <tr className="bg-slate-700 text-slate-300 uppercase">
+                  <th className="p-4 font-semibold">Name</th>
+                  <th className="p-4 font-semibold">Email</th>
+                  <th className="p-4 font-semibold">Role</th>
+                  <th className="p-4 font-semibold">Status</th>
+                  <th className="p-4 font-semibold text-center">Actions</th>
                 </tr>
-              ))}
+              </thead>
 
-              {users.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="text-center p-6 text-slate-400">
-                    No users found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              <tbody>
+                {users.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="border-t border-slate-700 hover:bg-slate-700/40 transition-colors"
+                  >
+                    <td className="p-4">{user.name || "No Name"}</td>
+                    <td className="p-4">{user.email}</td>
+                    <td className="p-4 capitalize">{user.role || "user"}</td>
+                    <td className="p-4">
+                      <span
+                        className={`font-medium ${
+                          user.isBlock ? "text-red-400" : "text-green-400"
+                        }`}
+                      >
+                        {user.isBlock ? "Blocked" : "Active"}
+                      </span>
+                    </td>
+
+                    <td className="p-4 flex justify-center items-center gap-4 flex-wrap">
+                      {/* View */}
+                      <button
+                        onClick={() => navigate(`/admin/users/${user.id}`)}
+                        aria-label="View User"
+                        className="hover:scale-110 transition-transform"
+                      >
+                        <Eye className="w-5 h-5 text-blue-400 hover:text-blue-300" />
+                      </button>
+
+                      {/* Block / Unblock */}
+                      <button
+                        onClick={() => toggleBlock(user.id)}
+                        aria-label={user.isBlock ? "Unblock User" : "Block User"}
+                        className="hover:scale-110 transition-transform"
+                      >
+                        {user.isBlock ? (
+                          <CheckCircle className="w-5 h-5 text-green-400 hover:text-green-300" />
+                        ) : (
+                          <Ban className="w-5 h-5 text-yellow-400 hover:text-yellow-300" />
+                        )}
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        onClick={() => openDeleteModal(user.id, user.name || user.email)}
+                        aria-label="Delete User"
+                        className="hover:scale-110 transition-transform"
+                      >
+                        <Trash2 className="w-5 h-5 text-red-400 hover:text-red-300" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+                {users.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="text-center p-6 text-slate-400">
+                      No users found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
 

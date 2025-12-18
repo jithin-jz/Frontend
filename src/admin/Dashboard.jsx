@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import AdminNavbar from './AdminNavbar';
 import api from '../utils/api';
+import Loader from '../components/Loader';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -20,6 +21,7 @@ const Dashboard = () => {
     category_data: [],
     low_stock_products: [],
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
@@ -27,10 +29,13 @@ const Dashboard = () => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       const res = await api.get('/panel/dashboard/');
       setStats(res.data);
     } catch (err) {
       console.error("Failed to load dashboard data", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,7 +86,11 @@ const Dashboard = () => {
     <div className="min-h-screen flex flex-col bg-slate-900 text-white">
       <AdminNavbar />
       <main className="flex-grow p-4 sm:p-6">
-        {isRootDashboard ? (
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader />
+          </div>
+        ) : isRootDashboard ? (
           <>
             {/* Stat Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">

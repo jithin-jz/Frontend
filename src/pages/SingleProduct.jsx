@@ -4,6 +4,7 @@ import useCartStore from "../store/useCartStore";
 import useAuthStore from "../store/useAuthStore";
 import { toast } from "react-toastify";
 import api from "../utils/api";
+import Loader from "../components/Loader";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -66,7 +67,7 @@ const SingleProduct = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh] bg-slate-900 text-white">
-        Loading product...
+        <Loader />
       </div>
     );
   }

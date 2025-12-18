@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../utils/api';
 import AdminNavbar from './AdminNavbar';
+import Loader from '../components/Loader';
 
 const EditProduct = () => {
   const { id } = useParams();
@@ -96,7 +97,9 @@ const EditProduct = () => {
 
       <main className="flex-grow flex items-center justify-center px-4 py-8">
         {loading ? (
-          <p className="text-slate-400">Loading product...</p>
+          <div className="flex justify-center py-20">
+            <Loader />
+          </div>
         ) : (
           <div className="w-full max-w-xl bg-slate-900 border border-slate-800 p-6 rounded-xl">
             <h2 className="text-xl font-semibold text-white mb-6 text-center">Edit Product</h2>

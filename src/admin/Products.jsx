@@ -4,14 +4,17 @@ import { toast } from 'react-toastify';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import api from '../utils/api';
 import AdminNavbar from './AdminNavbar';
+import Loader from '../components/Loader';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const fetchProducts = async (query = "", cat = "") => {
     try {
+      setLoading(true);
       let url = `/products/?search=${query}`;
       if (cat) url += `&category=${cat}`;
       
@@ -20,6 +23,8 @@ const AdminProducts = () => {
     } catch (error) {
       console.error('Fetch products failed', error);
       toast.error('Failed to fetch products');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,60 +86,66 @@ const AdminProducts = () => {
         </div>
 
         <div className="overflow-x-auto bg-slate-800 border border-slate-700 rounded-xl">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-slate-700 text-slate-300 text-xs uppercase">
-              <tr>
-                <th className="p-4">Image</th>
-                <th className="p-4">Name</th>
-                <th className="p-4">Price</th>
-                <th className="p-4">Stock</th>
-                <th className="p-4">Category</th>
-                <th className="p-4 text-center">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {products.length === 0 ? (
+          {loading ? (
+            <div className="py-20 flex justify-center">
+              <Loader />
+            </div>
+          ) : (
+            <table className="min-w-full text-left text-sm">
+              <thead className="bg-slate-700 text-slate-300 text-xs uppercase">
                 <tr>
-                  <td colSpan="6" className="p-6 text-center text-slate-400">
-                    No products found
-                  </td>
+                  <th className="p-4">Image</th>
+                  <th className="p-4">Name</th>
+                  <th className="p-4">Price</th>
+                  <th className="p-4">Stock</th>
+                  <th className="p-4">Category</th>
+                  <th className="p-4 text-center">Actions</th>
                 </tr>
-              ) : (
-                products.map(product => (
-                  <tr key={product.id} className="border-t border-slate-700">
-                    <td className="p-4">
-                      <img 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="w-12 h-12 object-cover rounded-md border border-slate-600"
-                      />
-                    </td>
-                    <td className="p-4">{product.name}</td>
-                    <td className="p-4 text-green-300 font-semibold">₹{product.price}</td>
-                    <td className={`p-4 font-semibold ${
-                      product.stock < 10 ? "text-red-500" : 
-                      product.stock < 20 ? "text-yellow-500" : "text-green-500"
-                    }`}>
-                      {product.stock}
-                    </td>
-                    <td className="p-4">{product.category}</td>
-                    <td className="p-4 flex justify-center gap-4">
-                      <Link to={`/admin/products/edit/${product.id}`} className="text-blue-400">
-                        <FiEdit2 size={18} />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="text-red-400"
-                      >
-                        <FiTrash2 size={18} />
-                      </button>
+              </thead>
+
+              <tbody>
+                {products.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="p-6 text-center text-slate-400">
+                      No products found
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  products.map(product => (
+                    <tr key={product.id} className="border-t border-slate-700">
+                      <td className="p-4">
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className="w-12 h-12 object-cover rounded-md border border-slate-600"
+                        />
+                      </td>
+                      <td className="p-4">{product.name}</td>
+                      <td className="p-4 text-green-300 font-semibold">₹{product.price}</td>
+                      <td className={`p-4 font-semibold ${
+                        product.stock < 10 ? "text-red-500" : 
+                        product.stock < 20 ? "text-yellow-500" : "text-green-500"
+                      }`}>
+                        {product.stock}
+                      </td>
+                      <td className="p-4">{product.category}</td>
+                      <td className="p-4 flex justify-center gap-4">
+                        <Link to={`/admin/products/edit/${product.id}`} className="text-blue-400">
+                          <FiEdit2 size={18} />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(product.id)}
+                          className="text-red-400"
+                        >
+                          <FiTrash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
 

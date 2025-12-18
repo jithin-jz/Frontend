@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import api from "../utils/api";
 import { FiUser, FiMapPin, FiPackage, FiHeart } from "react-icons/fi";
+import Loader from "../components/Loader";
 
 const ProfileDetails = () => {
   const { user, loading } = useAuthStore();
@@ -28,7 +29,7 @@ const ProfileDetails = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
-        Loading...
+        <Loader />
       </div>
     );
   }
@@ -80,7 +81,11 @@ const ProfileDetails = () => {
             </div>
 
             {loadingAddresses ? (
-              <p className="text-slate-400 text-sm">Loading...</p>
+              <div className="py-4 flex justify-center">
+                <div className="scale-75">
+                  <Loader />
+                </div>
+              </div>
             ) : addresses.length === 0 ? (
               <div className="text-center py-4">
                 <p className="text-slate-400 text-sm mb-3">No address saved.</p>
