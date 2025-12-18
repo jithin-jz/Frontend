@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useCartStore from "../store/useCartStore";
 import { toast } from "react-toastify";
+import Loader from "../components/Loader";
 
 const Cart = () => {
   const cart = useCartStore((state) => state.cart);
