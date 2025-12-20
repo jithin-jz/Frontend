@@ -9,9 +9,9 @@ import { FaHeart } from "react-icons/fa";
 import Loader from "../components/Loader";
 
 const bannerImages = [
-  "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/Home_Page_BdOVM1E.jpg?format=webp&w=1500&dpr=1.5",
-  "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/The_Dragon_Queen_-_Homepage_banner_copy.2.jpg?format=webp&w=1500&dpr=1.5",
-  "https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/spiderman_homepage.jpg?format=webp&w=1500&dpr=1.5",
+  "https://res.cloudinary.com/dk9i3gtpa/image/upload/v1766210649/Home_Page_BdOVM1E_zzej6x.png",
+  "https://res.cloudinary.com/dk9i3gtpa/image/upload/v1766210685/The_Dragon_Queen_-_Homepage_banner_copy.2_hiidk8.png",
+  "https://res.cloudinary.com/dk9i3gtpa/image/upload/v1766210719/spiderman_homepage_cvy64l.png",
 ];
 
 /* PRODUCT CARD */

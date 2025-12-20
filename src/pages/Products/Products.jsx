@@ -20,9 +20,9 @@ const priceRanges = [
 const categories = ["Men", "Women"];
 
 const sectionBanners = {
-  Men: "https://prod-img.thesouledstore.com/public/theSoul/uploads/users/artists/20250507115108-cp-1.jpg?format=webp&w=1500&dpr=1.5",
+  Men: "https://res.cloudinary.com/dk9i3gtpa/image/upload/v1766210763/20250507115108-cp-1_yyunu0.png",
   Women:
-    "https://prod-img.thesouledstore.com/public/theSoul/uploads/users/artists/20241202232928-cp-1.jpg?format=webp&w=1500&dpr=1.5",
+    "https://res.cloudinary.com/dk9i3gtpa/image/upload/v1766210796/20241202232928-cp-1_wtb4ad.png",
 };
 
 const Products = () => {
