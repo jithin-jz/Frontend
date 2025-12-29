@@ -17,7 +17,7 @@ const AdminUsers = () => {
       setLoading(true);
       const res = await api.get("/panel/users/");
       setUsers(res.data);
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
@@ -38,7 +38,7 @@ const AdminUsers = () => {
       toast.success(
         res.data.isBlock ? "User blocked successfully" : "User unblocked successfully"
       );
-    } catch (error) {
+    } catch {
       toast.error("Failed to update user status");
     }
   };
@@ -57,7 +57,7 @@ const AdminUsers = () => {
       toast.success("User deleted successfully");
       setUsers((prevUsers) => prevUsers.filter((u) => u.id !== deleteModal.userId));
       closeDeleteModal();
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete user");
     }
   };
@@ -80,6 +80,7 @@ const AdminUsers = () => {
             <table className="w-full min-w-[800px] text-left text-sm">
               <thead>
                 <tr className="bg-slate-700 text-slate-300 uppercase">
+                  <th className="p-4 font-semibold text-center w-20">Avatar</th>
                   <th className="p-4 font-semibold">Name</th>
                   <th className="p-4 font-semibold">Email</th>
                   <th className="p-4 font-semibold">Role</th>
@@ -94,6 +95,19 @@ const AdminUsers = () => {
                     key={user.id}
                     className="border-t border-slate-700 hover:bg-slate-700/40 transition-colors"
                   >
+                    <td className="p-4 flex justify-center">
+                      {user.picture ? (
+                        <img
+                          src={user.picture}
+                          alt={user.name}
+                          className="w-10 h-10 rounded-full border border-slate-600 object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
+                          <Eye className="w-5 h-5 text-slate-500" />
+                        </div>
+                      )}
+                    </td>
                     <td className="p-4">{user.name || "No Name"}</td>
                     <td className="p-4">{user.email}</td>
                     <td className="p-4 capitalize">{user.role || "user"}</td>

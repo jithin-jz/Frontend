@@ -19,9 +19,7 @@ import {
 
 const Navbar = () => {
   const { user, logout } = useAuthStore();
-  const cart = useCartStore((state) => state.cart);
-  const wishlistItems = useCartStore((state) => state.wishlistItems);
-  const loading = useCartStore((state) => state.loading);
+  const { cart, wishlistItems, loading } = useCartStore();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,7 +50,9 @@ const Navbar = () => {
 
   useEffect(() => {
     const close = (e) => {
-      if (!e.target.closest(".dropdown-menu")) setDropdownOpen(false);
+      if (!e.target.closest(".dropdown-menu")) {
+        setDropdownOpen(false);
+      }
     };
     document.addEventListener("click", close);
     return () => document.removeEventListener("click", close);
@@ -101,8 +101,8 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Logo Center */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 z-20 pointer-events-auto">
+        {/* Logo */}
+        <div className="absolute left-1/2 -translate-x-1/2">
           <Link to="/">
             <img
               src="https://tss-static-images.gumlet.io/non-member-logo2.gif"
@@ -127,7 +127,7 @@ const Navbar = () => {
                 >
                   {link.icon}
                   {link.badge > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-sm border border-slate-900">
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border border-slate-900">
                       {link.badge}
                     </span>
                   )}
@@ -137,10 +137,18 @@ const Navbar = () => {
               {/* User Dropdown */}
               <div className="relative dropdown-menu">
                 <button
-                  onClick={() => setDropdownOpen((prev) => !prev)}
-                  className="p-2 text-white hover:bg-slate-700 rounded-full transition"
+                  onClick={() => setDropdownOpen((p) => !p)}
+                  className="p-2 text-white hover:bg-slate-700 rounded-full"
                 >
-                  <FiUser />
+                  {user?.picture ? (
+                    <img
+                      src={user.picture}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full border border-slate-700 object-cover"
+                    />
+                  ) : (
+                    <FiUser />
+                  )}
                 </button>
 
                 {dropdownOpen && (
@@ -173,7 +181,7 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`p-2 rounded-md text-white hover:bg-slate-700 transition ${
+                className={`p-2 rounded-md text-white hover:bg-slate-700 ${
                   isActive(link.to) ? "bg-slate-800" : ""
                 }`}
               >
@@ -186,19 +194,16 @@ const Navbar = () => {
         {/* Mobile */}
         <div className="md:hidden flex items-center w-full justify-between">
           <button
-            onClick={() => setMenuOpen((prev) => !prev)}
+            onClick={() => setMenuOpen((p) => !p)}
             className="p-2 text-white hover:bg-slate-700"
           >
             {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          <Link
-            to="/cart"
-            className="relative p-2 text-white hover:bg-slate-700"
-          >
+          <Link to="/cart" className="relative p-2 text-white hover:bg-slate-700">
             <FiShoppingCart size={22} />
             {cartBadge > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-sm border border-slate-900">
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border border-slate-900">
                 {cartBadge}
               </span>
             )}
@@ -229,11 +234,7 @@ const Navbar = () => {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`flex items-center gap-2 p-2 rounded-md ${
-                    isActive(link.to)
-                      ? "bg-slate-800"
-                      : "text-white hover:bg-slate-700"
-                  }`}
+                  className="flex items-center gap-2 p-2 text-white hover:bg-slate-700 rounded-md"
                 >
                   {link.icon} {link.label}
                   {link.badge > 0 && (
@@ -256,11 +257,7 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`flex items-center gap-2 p-2 rounded-md ${
-                  isActive(link.to)
-                    ? "bg-slate-800"
-                    : "text-white hover:bg-slate-700"
-                }`}
+                className="flex items-center gap-2 p-2 text-white hover:bg-slate-700 rounded-md"
               >
                 {link.icon} {link.label}
               </Link>
