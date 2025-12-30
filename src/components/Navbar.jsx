@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore";
 import useCartStore from "../store/useCartStore";
+import api from "../utils/api";
 
 import {
   FiLogOut,
@@ -15,7 +16,9 @@ import {
   FiHome,
   FiGrid,
   FiHeart,
+  FiMapPin,
 } from "react-icons/fi";
+import { Dices } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout } = useAuthStore();
@@ -26,6 +29,7 @@ const Navbar = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [surprisingMe, setSurprisingMe] = useState(false);
 
   const cartCount = cart.reduce((sum, it) => sum + (it.quantity || 1), 0);
   const wishlistCount = wishlistItems.length;
@@ -47,6 +51,28 @@ const Navbar = () => {
     setMenuOpen(false);
     setTimeout(() => setDropdownOpen(false), 50);
   }, [location.pathname]);
+
+  const handleSurpriseMe = async () => {
+    try {
+      setSurprisingMe(true);
+      const res = await api.get("/products/");
+      const products = res.data;
+      
+      if (products && products.length > 0) {
+        const randomIndex = Math.floor(Math.random() * products.length);
+        const randomProduct = products[randomIndex];
+        
+        // Add slight delay for effect
+        setTimeout(() => {
+          navigate(`/products/${randomProduct.id}`);
+          setSurprisingMe(false);
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Surprise Me error:", error);
+      setSurprisingMe(false);
+    }
+  };
 
   useEffect(() => {
     const close = (e) => {
@@ -99,6 +125,18 @@ const Navbar = () => {
               {link.icon}
             </Link>
           ))}
+          
+          {/* Vibe Check Button */}
+          {user && (
+            <button
+              onClick={handleSurpriseMe}
+              disabled={surprisingMe}
+              className="p-2 rounded-md hover:bg-slate-700 transition disabled:opacity-50"
+              title="Vibe Check - Random Product"
+            >
+              <Dices className={`w-5 h-5 ${surprisingMe ? 'animate-spin text-cyan-400' : 'text-cyan-400 hover:text-yellow-400'} transition-all`} />
+            </button>
+          )}
         </div>
 
         {/* Logo */}
