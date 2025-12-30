@@ -10,6 +10,7 @@ import { setLogoutCallback } from "./utils/api";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Loader from "./components/Loader";
+import ScrollToTop from "./components/ScrollToTop";
 
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import PublicRoute from "./Routes/PublicRoute";
@@ -125,8 +126,9 @@ const AppContent = () => {
 
 const App = () => (
     <Router>
+        <ScrollToTop />
         <AppContent />
-        <ToastContainer position="bottom-right" autoClose={1000} theme="colored" />
+        <ToastContainer position="bottom-right" autoClose={1000} theme="dark" />
     </Router>
 );
 

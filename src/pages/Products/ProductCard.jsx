@@ -75,7 +75,7 @@ const ProductCard = ({
             onClick={handleAddToCart}
             className="px-4 py-2 rounded-full bg-white text-black text-xs sm:text-sm font-semibold hover:bg-gray-200 transition-all"
           >
-            Add
+            Cart
           </button>
         </div>
       </Link>

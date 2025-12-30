@@ -59,7 +59,7 @@ const Cart = () => {
           
           <Link
             to="/products"
-            className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow-lg transition-all hover:scale-105"
+            className="px-4 py-2 rounded-full bg-white text-black text-sm font-semibold hover:bg-gray-200 transition-all inline-block"
           >
             Browse Products
           </Link>
@@ -130,7 +130,7 @@ const Cart = () => {
             <Link
               to="/payment"
               onClick={handleCheckout}
-              className="block mt-6 w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-lg text-center shadow-lg transition-all hover:scale-105"
+              className="block mt-6 w-full px-4 py-2.5 rounded-full bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-all text-center"
             >
               Checkout
             </Link>

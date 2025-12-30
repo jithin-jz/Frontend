@@ -45,7 +45,7 @@ const OrderSuccess = () => {
         <div className="pt-4">
           <a
             href="/orders"
-            className="inline-block w-full bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-lg font-semibold transition-all hover:scale-105 shadow-lg"
+            className="inline-block w-full px-4 py-2.5 rounded-full bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-all text-center"
           >
             View My Orders
           </a>

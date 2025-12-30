@@ -33,6 +33,7 @@ const Dashboard = () => {
       setLoading(true);
       const res = await api.get('/panel/dashboard/');
       setStats(res.data);
+      setLoading(false);
     } catch (err) {
       handleApiError(err, 'Failed to load dashboard data');
       setLoading(false);

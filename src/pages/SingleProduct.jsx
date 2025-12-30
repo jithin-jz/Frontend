@@ -79,7 +79,7 @@ const SingleProduct = () => {
         <p className="text-red-500 font-semibold mb-4">Product not found</p>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-all hover:scale-105 shadow-md"
+          className="px-4 py-2 rounded-full bg-white text-black text-sm font-semibold hover:bg-gray-200 transition-all"
         >
           Go Back
         </button>
@@ -134,7 +134,7 @@ const SingleProduct = () => {
             <button
               disabled={btnLoading}
               onClick={safeAddToCart}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg font-semibold bg-red-600 hover:bg-red-700 transition-all disabled:opacity-50 hover:scale-105 shadow-lg"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-all disabled:opacity-50"
             >
               {btnLoading ? "Processing..." : "Add to Cart"}
             </button>
@@ -142,7 +142,7 @@ const SingleProduct = () => {
             <button
               disabled={btnLoading}
               onClick={safeBuyNow}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg font-semibold bg-red-600 hover:bg-red-700 transition-all disabled:opacity-50 hover:scale-105 shadow-lg"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-all disabled:opacity-50"
             >
               {btnLoading ? "Processing..." : "Buy Now"}
             </button>
